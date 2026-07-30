@@ -2,19 +2,7 @@ using HRWatch.Domain.Entities;
 
 namespace HRWatch.Domain.Services;
 
-/// <summary>
-/// DOMAIN SERVICE: ComplianceEvaluator
-/// 
-/// Calculates a compliance score (0-100) for an employee over a given period.
-/// Score is used to generate WeeklyReport entries.
-/// 
-/// Score formula (can be tuned):
-///   Base: 100
-///   -10 per absence (max -30)
-///   -5 per late arrival (max -20)
-///   -3 per insufficient hours day (max -15)
-///   -2 per other violation (max -10)
-/// </summary>
+
 public class ComplianceEvaluator
 {
     private const decimal BaseScore            = 100m;
@@ -28,10 +16,7 @@ public class ComplianceEvaluator
     private const decimal MaxShortHoursPenalty = 15m;
     private const decimal MaxOtherPenalty      = 10m;
 
-    /// <summary>
-    /// Calculates the compliance score for a single employee for a given week.
-    /// Returns a score between 0 and 100.
-    /// </summary>
+   
     public ComplianceResult Evaluate(
         Employee employee,
         IReadOnlyList<Attendance> weekAttendance,
@@ -64,9 +49,7 @@ public class ComplianceEvaluator
     }
 }
 
-/// <summary>
-/// Result of compliance evaluation — a pure data transfer object from the domain service.
-/// </summary>
+
 public record ComplianceResult(
     Guid    EmployeeId,
     string  EmployeeName,

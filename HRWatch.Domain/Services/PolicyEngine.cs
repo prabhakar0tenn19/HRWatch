@@ -3,26 +3,10 @@ using HRWatch.Domain.Enums;
 
 namespace HRWatch.Domain.Services;
 
-/// <summary>
-/// DOMAIN SERVICE: PolicyEngine
-/// 
-/// A Domain Service is used when business logic:
-/// 1. Doesn't naturally belong to a single entity
-/// 2. Involves multiple entities working together
-/// 3. Has complex rules that would bloat an entity
-/// 
-/// PolicyEngine evaluates whether a set of attendance records
-/// violates the rules defined in a Policy.
-/// 
-/// NOTE: This is pure domain logic — no EF Core, no HTTP, no DI containers.
-/// It takes plain objects and returns plain objects.
-/// </summary>
+
 public class PolicyEngine
 {
-    /// <summary>
-    /// Evaluates all attendance records for an employee against the applicable policies.
-    /// Returns a list of violations found.
-    /// </summary>
+
     public IReadOnlyList<Violation> EvaluateAttendance(
         Employee employee,
         IReadOnlyList<Attendance> attendanceRecords,
@@ -102,10 +86,7 @@ public class PolicyEngine
     }
 }
 
-/// <summary>
-/// Internal helper: parsed version of a policy's JSON rules.
-/// This keeps the Policy entity clean (just stores JSON string).
-/// </summary>
+
 internal class PolicyRules
 {
     public int     MaxLateArrivalsPerMonth { get; init; }

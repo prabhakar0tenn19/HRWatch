@@ -6,22 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HRWatch.Infrastructure.BackgroundJobs;
 
-/// <summary>
-/// HANGFIRE JOB: AttendanceSyncJob
-/// 
-/// This job runs every night (configured in DependencyInjection.cs).
-/// 
-/// CRITICAL RULE: Jobs NEVER contain business logic.
-/// Jobs are just "triggers" that send commands through the mediator.
-/// 
-/// WHY?
-/// - If logic is in the job, you can't test it without Hangfire
-/// - If logic is in a handler, you can test it with a simple unit test
-/// - The handler doesn't know or care WHO called it (job, controller, test)
-/// 
-/// FLOW:
-///   Hangfire Scheduler → AttendanceSyncJob → ICommandMediator → SyncAttendanceCommandHandler
-/// </summary>
+
 public class AttendanceSyncJob
 {
     private readonly ICommandMediator _commandMediator;
@@ -33,10 +18,7 @@ public class AttendanceSyncJob
         _logger          = logger;
     }
 
-    /// <summary>
-    /// Syncs attendance for yesterday (run daily at midnight).
-    /// Hangfire will call this method by name.
-    /// </summary>
+   
     public async Task ExecuteAsync()
     {
         _logger.LogInformation("[AttendanceSyncJob] Starting...");
@@ -59,11 +41,7 @@ public class AttendanceSyncJob
     }
 }
 
-/// <summary>
-/// HANGFIRE JOB: GenerateWeeklyReportJob
-/// 
-/// Runs every Monday at 6 AM to generate the previous week's compliance report.
-/// </summary>
+
 public class GenerateWeeklyReportJob
 {
     private readonly ICommandMediator _commandMediator;
@@ -91,11 +69,7 @@ public class GenerateWeeklyReportJob
     }
 }
 
-/// <summary>
-/// HANGFIRE JOB: EmployeeSyncJob
-/// 
-/// Runs daily to sync employees from the external HR system.
-/// </summary>
+
 public class EmployeeSyncJob
 {
     private readonly ICommandMediator _commandMediator;
@@ -124,11 +98,6 @@ public class EmployeeSyncJob
     }
 }
 
-/// <summary>
-/// HANGFIRE JOB: NotificationJob
-/// 
-/// Placeholder — will send notifications/alerts for pending violations.
-/// </summary>
 public class NotificationJob
 {
     private readonly ILogger<NotificationJob> _logger;

@@ -9,10 +9,7 @@ using System.Text.Json;
 
 namespace HRWatch.Infrastructure.ExternalApis;
 
-/// <summary>
-/// Options class for external API configuration.
-/// Bound from appsettings.json "ExternalApis" section.
-/// </summary>
+
 public class ExternalApiOptions
 {
     public ApiEndpointConfig EmployeeApi   { get; init; } = new();
@@ -32,7 +29,7 @@ public class ApiEndpointConfig
 // EMPLOYEE API CLIENT
 // ════════════════════════════════════════════════════════════════════════════
 
-/// <summary>
+
 /// External Employee API Client.
 /// 
 /// RESPONSIBILITIES:
@@ -47,7 +44,7 @@ public class ApiEndpointConfig
 /// 
 /// This is registered with Named HttpClient in DI ("EmployeeApiClient")
 /// which handles base URL, timeout, and retry policies.
-/// </summary>
+
 public class EmployeeClient : IEmployeeApiClient
 {
     private readonly HttpClient _httpClient;
