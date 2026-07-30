@@ -1,0 +1,413 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "HRWatch.Application/1.0.0": {
+        "dependencies": {
+          "FluentValidation": "11.9.2",
+          "FluentValidation.DependencyInjectionExtensions": "11.9.2",
+          "HRWatch.Domain": "1.0.0",
+          "LiteBus": "6.0.2",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.8",
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.8"
+        },
+        "runtime": {
+          "HRWatch.Application.dll": {}
+        }
+      },
+      "FluentValidation/11.9.2": {
+        "runtime": {
+          "lib/net8.0/FluentValidation.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.9.2.0"
+          }
+        }
+      },
+      "FluentValidation.DependencyInjectionExtensions/11.9.2": {
+        "dependencies": {
+          "FluentValidation": "11.9.2",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.8"
+        },
+        "runtime": {
+          "lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.9.2.0"
+          }
+        }
+      },
+      "LiteBus/6.0.2": {
+        "dependencies": {
+          "LiteBus.Commands": "6.0.2",
+          "LiteBus.Commands.Abstractions": "6.0.2",
+          "LiteBus.DurableMessaging.Abstractions": "6.0.2",
+          "LiteBus.Events": "6.0.2",
+          "LiteBus.Events.Abstractions": "6.0.2",
+          "LiteBus.Inbox": "6.0.2",
+          "LiteBus.Inbox.Abstractions": "6.0.2",
+          "LiteBus.Messaging": "6.0.2",
+          "LiteBus.Messaging.Abstractions": "6.0.2",
+          "LiteBus.Outbox": "6.0.2",
+          "LiteBus.Outbox.Abstractions": "6.0.2",
+          "LiteBus.Queries": "6.0.2",
+          "LiteBus.Queries.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Commands/6.0.2": {
+        "dependencies": {
+          "LiteBus.Commands.Abstractions": "6.0.2",
+          "LiteBus.Messaging": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Commands.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Commands.Abstractions/6.0.2": {
+        "dependencies": {
+          "LiteBus.Messaging.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Commands.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.DurableMessaging.Abstractions/6.0.2": {
+        "dependencies": {
+          "LiteBus.Messaging.Abstractions": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.DurableMessaging.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Events/6.0.2": {
+        "dependencies": {
+          "LiteBus.Events.Abstractions": "6.0.2",
+          "LiteBus.Messaging": "6.0.2",
+          "LiteBus.Messaging.Abstractions": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Events.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Events.Abstractions/6.0.2": {
+        "dependencies": {
+          "LiteBus.Messaging.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Events.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Inbox/6.0.2": {
+        "dependencies": {
+          "LiteBus.DurableMessaging.Abstractions": "6.0.2",
+          "LiteBus.Inbox.Abstractions": "6.0.2",
+          "LiteBus.Messaging": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.8"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Inbox.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Inbox.Abstractions/6.0.2": {
+        "dependencies": {
+          "LiteBus.DurableMessaging.Abstractions": "6.0.2",
+          "LiteBus.Messaging.Abstractions": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Inbox.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Messaging/6.0.2": {
+        "dependencies": {
+          "LiteBus.DurableMessaging.Abstractions": "6.0.2",
+          "LiteBus.Messaging.Abstractions": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.8"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Messaging.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Messaging.Abstractions/6.0.2": {
+        "dependencies": {
+          "LiteBus.Runtime.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Messaging.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Outbox/6.0.2": {
+        "dependencies": {
+          "LiteBus.DurableMessaging.Abstractions": "6.0.2",
+          "LiteBus.Messaging": "6.0.2",
+          "LiteBus.Outbox.Abstractions": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.8"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Outbox.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Outbox.Abstractions/6.0.2": {
+        "dependencies": {
+          "LiteBus.DurableMessaging.Abstractions": "6.0.2",
+          "LiteBus.Messaging.Abstractions": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Outbox.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Queries/6.0.2": {
+        "dependencies": {
+          "LiteBus.Messaging": "6.0.2",
+          "LiteBus.Queries.Abstractions": "6.0.2",
+          "LiteBus.Runtime.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Queries.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Queries.Abstractions/6.0.2": {
+        "dependencies": {
+          "LiteBus.Messaging.Abstractions": "6.0.2"
+        },
+        "runtime": {
+          "lib/net10.0/LiteBus.Queries.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "LiteBus.Runtime.Abstractions/6.0.2": {
+        "runtime": {
+          "lib/net10.0/LiteBus.Runtime.Abstractions.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.8": {
+        "runtime": {
+          "lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.826.23019"
+          }
+        }
+      },
+      "Microsoft.Extensions.Logging.Abstractions/10.0.8": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.8"
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.826.23019"
+          }
+        }
+      },
+      "HRWatch.Domain/1.0.0": {
+        "runtime": {
+          "HRWatch.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "HRWatch.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "FluentValidation/11.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-XeHp9LvFvu1fsQ/NvDCymV02GOCB1nz7ZUhfpI3uMhCcHTkV1K5bMkv+Nc/kuNYyAsX5+5bcmUanIEMd5QN+Eg==",
+      "path": "fluentvalidation/11.9.2",
+      "hashPath": "fluentvalidation.11.9.2.nupkg.sha512"
+    },
+    "FluentValidation.DependencyInjectionExtensions/11.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PMAdnR1fX1c8DyUvu5YvRa0V0JHES8vzXnVX0OSS3z9W/SkuHqcGrtiSOdW1QehG3vZhXsKhqf3wgDzW/OYahA==",
+      "path": "fluentvalidation.dependencyinjectionextensions/11.9.2",
+      "hashPath": "fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512"
+    },
+    "LiteBus/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-G+puWtU2hk8/sPbOFdZfy3aKxNEjUoIC11wwF3cX619CAMl2pTTTliCGOP0Gcl9qnPjYsPj9mePJRuhJppdbUA==",
+      "path": "litebus/6.0.2",
+      "hashPath": "litebus.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Commands/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MpsN0zG429lCf0Cuee+25qjAs1UsggImfQE8B0sLVHVrCFHB794brSSXNklBspXDlT+I9wPK7ntV82yDlz463Q==",
+      "path": "litebus.commands/6.0.2",
+      "hashPath": "litebus.commands.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Commands.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mrZcXivICO4ouDHZzWX8Oj2Qxa9VMBeoEMId7tHE4b0QWs3ok7GCD1LyB1mb0VDxyYGnKMik5pZWjFmxssV5jg==",
+      "path": "litebus.commands.abstractions/6.0.2",
+      "hashPath": "litebus.commands.abstractions.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.DurableMessaging.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ipayNdrD5Qj9asH2duya0HQ0mw6u8hEe2PXOcoSu7L270Vaa/5TmRolsYX9ADd2oLyNmYwI4aYpjhyPj6Tqr/w==",
+      "path": "litebus.durablemessaging.abstractions/6.0.2",
+      "hashPath": "litebus.durablemessaging.abstractions.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Events/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-w6zqG/vwi1Gtu+l+qelgz2Z3vrjfx5h0LCIvMwBy5BaSPXEprgkiQhu7tSPcBMXn//BZZjddR6FAM29Rn2jQDQ==",
+      "path": "litebus.events/6.0.2",
+      "hashPath": "litebus.events.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Events.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7t1hEgDkOjPvH/Fgqk3dMCCVPUDGEqG526OC644zds1LcpI0TMIGaNJW8bH6BqcI0EtyjsLRh69gidrnkfOE/A==",
+      "path": "litebus.events.abstractions/6.0.2",
+      "hashPath": "litebus.events.abstractions.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Inbox/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-j1oWwTAfC16Bh9n7QGGVFtGoGPU41xpeAPBogaQcXpaZjy4+jB45io669HhXroblPtK7jxr1b/4o6AIbsPxW9A==",
+      "path": "litebus.inbox/6.0.2",
+      "hashPath": "litebus.inbox.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Inbox.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yvePOARq7wpGedaM7dot3YV4bhE2QKfZrbYPun1Q4N/7rcZF4Va//+K3bvyF52sIJogmUDkxsfWn8HZEtK9yHA==",
+      "path": "litebus.inbox.abstractions/6.0.2",
+      "hashPath": "litebus.inbox.abstractions.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Messaging/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/XznMltNQwhsMaisG9xxKUlby0MnT+bH+VxC8QDPdHd9/T9P9lz9kEOSrJO0K5xuAjrqWJe+VvSf5r8adx9X6A==",
+      "path": "litebus.messaging/6.0.2",
+      "hashPath": "litebus.messaging.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Messaging.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-C+uzkv9BuE3aq3/MLqIv4noWMUBTAxqfOlhZzmCL8udPSc1X0b7gDKoOFDRuCC6xN1NMzmt6+R1Ns3wDTBJHYg==",
+      "path": "litebus.messaging.abstractions/6.0.2",
+      "hashPath": "litebus.messaging.abstractions.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Outbox/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nDnn9pIM81wp+KnQSXJBrpNOSGzOgqlhhGX4i2jvPzhCcezBO2rVW7NYz7XGHQTGTl0t4TlxZgK+lvct4WevfA==",
+      "path": "litebus.outbox/6.0.2",
+      "hashPath": "litebus.outbox.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Outbox.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kI1O2FDLW2G684hYF+XiRELUTGC6VGpkIbFrAQuJSLBhVLUXwSt6bqJpAQ/Qqs04P2zIHU0xMPKGp979Pd2VRw==",
+      "path": "litebus.outbox.abstractions/6.0.2",
+      "hashPath": "litebus.outbox.abstractions.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Queries/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ow1U/KZunp9TRlxwV9ZZxTkbIqwHXjh4MfIKmHyq37vKaC942JEOy58DlZlimVlagBHmbIiRPsvm4fE4vtKfGQ==",
+      "path": "litebus.queries/6.0.2",
+      "hashPath": "litebus.queries.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Queries.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-01ItDjJUUXIo0RK+7GJc5SReDuDvfMaNakTvV89rH/I3Imdhl+qYHzhUuRkYe4v0+KVH6HLLHTZwpsqH9E1Zkw==",
+      "path": "litebus.queries.abstractions/6.0.2",
+      "hashPath": "litebus.queries.abstractions.6.0.2.nupkg.sha512"
+    },
+    "LiteBus.Runtime.Abstractions/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4NbWHFlsgeE69s1ZUr3c2Q4aiBU25HdZQOmUDD+sEaSJ93cO3iVATBFiPYmFdN9yxF1gzLX+fgl/dQJpIvzKqA==",
+      "path": "litebus.runtime.abstractions/6.0.2",
+      "hashPath": "litebus.runtime.abstractions.6.0.2.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-21nbDV60SRPWGIivsyl6lqBeEJNG1sginhhfWgRrr3Ais7aQ12To25OAHQxgoiJkjqy1aQ6RxpZBGYuTi7Ge6A==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/10.0.8",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.10.0.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Logging.Abstractions/10.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-fdVadZmsC8jRP0KvKy8mO8f6GV/HyBvElfcSxEhd+5FM5boAw/01iSaCto5G3G37ApJira4A3pNaVvBv8cUiLQ==",
+      "path": "microsoft.extensions.logging.abstractions/10.0.8",
+      "hashPath": "microsoft.extensions.logging.abstractions.10.0.8.nupkg.sha512"
+    },
+    "HRWatch.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

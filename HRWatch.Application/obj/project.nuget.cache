@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "dgSpecHash": "E4uRCLUz2rI=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Application\\HRWatch.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\USER\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus\\6.0.2\\litebus.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.commands\\6.0.2\\litebus.commands.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.commands.abstractions\\6.0.2\\litebus.commands.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.durablemessaging.abstractions\\6.0.2\\litebus.durablemessaging.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.events\\6.0.2\\litebus.events.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.events.abstractions\\6.0.2\\litebus.events.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.inbox\\6.0.2\\litebus.inbox.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.inbox.abstractions\\6.0.2\\litebus.inbox.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.messaging\\6.0.2\\litebus.messaging.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.messaging.abstractions\\6.0.2\\litebus.messaging.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.outbox\\6.0.2\\litebus.outbox.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.outbox.abstractions\\6.0.2\\litebus.outbox.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.queries\\6.0.2\\litebus.queries.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.queries.abstractions\\6.0.2\\litebus.queries.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\litebus.runtime.abstractions\\6.0.2\\litebus.runtime.abstractions.6.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.8\\microsoft.extensions.dependencyinjection.abstractions.10.0.8.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.8\\microsoft.extensions.logging.abstractions.10.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
