@@ -1,7 +1,6 @@
 using HRWatch.Application.Common.Abstractions;
 using HRWatch.Application.Features.Employees.DTOs;
 using HRWatch.Domain.Entities;
-using HRWatch.Domain.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace HRWatch.Application.Features.Employees.Commands.SyncEmployees;
@@ -60,7 +59,6 @@ public class SyncEmployeesCommandHandler : ICommandHandler<SyncEmployeesCommand,
                     externalEmployee.LastName,
                     externalEmployee.Email,
                     externalEmployee.Department,
-                    Enum.Parse<Role>(externalEmployee.Role, ignoreCase: true),
                     externalEmployee.JoinDate,
                     command.TriggeredBy);
 
@@ -73,7 +71,6 @@ public class SyncEmployeesCommandHandler : ICommandHandler<SyncEmployeesCommand,
                     externalEmployee.FirstName,
                     externalEmployee.LastName,
                     externalEmployee.Department,
-                    Enum.Parse<Role>(externalEmployee.Role, ignoreCase: true),
                     command.TriggeredBy);
 
                 await _employeeRepository.UpdateAsync(existing, cancellationToken);

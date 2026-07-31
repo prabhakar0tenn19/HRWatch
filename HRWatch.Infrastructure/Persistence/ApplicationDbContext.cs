@@ -18,6 +18,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Violation> Violations => Set<Violation>();
     public DbSet<Designation> Designations => Set<Designation>();
     public DbSet<Holiday> Holidays => Set<Holiday>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

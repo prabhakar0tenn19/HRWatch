@@ -2,7 +2,6 @@ using HRWatch.Application.Common.Abstractions;
 using HRWatch.Application.Features.Employees.Commands.SyncEmployees;
 using HRWatch.Application.Features.Employees.DTOs;
 using HRWatch.Domain.Entities;
-using HRWatch.Domain.Enums;
 using Moq;
 using FluentAssertions;
 using Xunit;
@@ -22,7 +21,7 @@ public class SyncEmployeesCommandHandlerTests
         var externalEmployees = new List<ExternalEmployeeDto>
         {
             new() { ExternalId = "EXT001", FirstName = "John", LastName = "Doe",
-                    Email = "john@co.com", Department = "Eng", Role = "Employee",
+                    Email = "john@co.com", Department = "Eng",
                     JoinDate = DateTime.Today.AddYears(-1), IsActive = true }
         };
 

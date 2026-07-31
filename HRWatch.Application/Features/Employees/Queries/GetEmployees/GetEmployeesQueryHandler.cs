@@ -61,7 +61,6 @@ public class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, Employe
             FullName    = e.FullName,
             Email       = e.Email,
             Department  = e.Department,
-            Role        = e.Role.ToString(),
             Designation = e.Designation?.Title ?? string.Empty,
             JoinDate    = e.JoinDate,
             IsActive    = e.IsActive

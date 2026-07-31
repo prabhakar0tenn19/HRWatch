@@ -56,7 +56,8 @@ public interface IAttendanceRepository : IRepository<Attendance>
 public interface IPolicyRepository : IRepository<Policy>
 {
     Task<IReadOnlyList<Policy>> GetActivePoliciesAsync(CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<Policy>> GetForDepartmentAsync(string department, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Policy>> GetForDesignationAsync(Guid? designationId, string? department, CancellationToken cancellationToken = default);
+    Task<bool> HasOverlappingActivePolicyAsync(Guid? designationId, DateTime effectiveFrom, DateTime? effectiveTo, Guid? excludePolicyId = null, CancellationToken cancellationToken = default);
 }
 
 public interface IWeeklyReportRepository : IRepository<WeeklyReport>
@@ -77,4 +78,10 @@ public interface IHolidayRepository : IRepository<Holiday>
 {
     Task<IReadOnlyList<Holiday>> GetForPeriodAsync(DateTime start, DateTime end, CancellationToken cancellationToken = default);
     Task<bool> IsHolidayAsync(DateTime date, CancellationToken cancellationToken = default);
+}
+
+public interface IAuditLogRepository : IRepository<AuditLog>
+{
+    Task<IReadOnlyList<AuditLog>> GetRecentAsync(int count = 50, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<AuditLog>> GetByEntityAsync(string entityName, string entityId, CancellationToken cancellationToken = default);
 }

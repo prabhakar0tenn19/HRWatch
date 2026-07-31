@@ -3,10 +3,8 @@ using HRWatch.Domain.Enums;
 
 namespace HRWatch.Domain.Services;
 
-
 public class PolicyEngine
 {
-
     public IReadOnlyList<Violation> EvaluateAttendance(
         Employee employee,
         IReadOnlyList<Attendance> attendanceRecords,
@@ -16,12 +14,15 @@ public class PolicyEngine
     {
         var violations = new List<Violation>();
 
-        foreach (var policy in policies.Where(p => p.IsActive))
+        var applicablePolicies = policies
+            .Where(p => p.IsActive)
+            .Where(p => p.DesignationId == null || p.DesignationId == employee.DesignationId)
+            .Where(p => string.IsNullOrWhiteSpace(p.ApplicableDepartment) || string.Equals(p.ApplicableDepartment, employee.Department, StringComparison.OrdinalIgnoreCase));
+
+        foreach (var policy in applicablePolicies)
         {
-            // Parse the JSON rules into a domain-friendly object
             var rules = PolicyRules.ParseFrom(policy.RulesJson);
 
-            // ── Rule 1: Max Late Arrivals ──────────────────────────────────
             if (rules.MaxLateArrivalsPerMonth > 0)
             {
                 var lateCount = attendanceRecords
@@ -34,13 +35,13 @@ public class PolicyEngine
                     violations.Add(Violation.Create(
                         employee.Id,
                         ViolationType.ExcessiveLateArrivals,
+                        ViolationSeverity.Medium,
                         $"Employee arrived late {lateCount} times. Policy allows max {rules.MaxLateArrivalsPerMonth}.",
                         forPeriodEnd,
                         policy.Id));
                 }
             }
 
-            // ── Rule 2: Max Absences ────────────────────────────────────────
             if (rules.MaxAbsencesPerMonth > 0)
             {
                 var absentCount = attendanceRecords
@@ -53,13 +54,13 @@ public class PolicyEngine
                     violations.Add(Violation.Create(
                         employee.Id,
                         ViolationType.ExcessiveAbsences,
+                        ViolationSeverity.High,
                         $"Employee was absent {absentCount} times. Policy allows max {rules.MaxAbsencesPerMonth}.",
                         forPeriodEnd,
                         policy.Id));
                 }
             }
 
-            // ── Rule 3: Minimum Daily Work Hours ────────────────────────────
             if (rules.MinDailyWorkHours > 0)
             {
                 var shortDays = attendanceRecords
@@ -75,6 +76,7 @@ public class PolicyEngine
                     violations.Add(Violation.Create(
                         employee.Id,
                         ViolationType.InsufficientWorkHours,
+                        ViolationSeverity.Low,
                         $"Worked only {shortDay.TotalWorkHours}h on {shortDay.Date:yyyy-MM-dd}. Minimum is {rules.MinDailyWorkHours}h.",
                         shortDay.Date,
                         policy.Id));
@@ -86,13 +88,12 @@ public class PolicyEngine
     }
 }
 
-
 internal class PolicyRules
 {
-    public int     MaxLateArrivalsPerMonth { get; init; }
-    public int     MaxAbsencesPerMonth     { get; init; }
-    public decimal MinDailyWorkHours       { get; init; }
-    public int     GracePeriodMinutes      { get; init; }
+    public int MaxLateArrivalsPerMonth { get; init; }
+    public int MaxAbsencesPerMonth { get; init; }
+    public decimal MinDailyWorkHours { get; init; }
+    public int GracePeriodMinutes { get; init; }
 
     public static PolicyRules ParseFrom(string rulesJson)
     {
@@ -104,7 +105,6 @@ internal class PolicyRules
         }
         catch
         {
-            // Malformed JSON — return defaults (no restrictions)
             return new PolicyRules();
         }
     }

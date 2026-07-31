@@ -115,14 +115,34 @@ public class PolicyRepository : Repository<Policy>, IPolicyRepository
     {
         return await _context.Policies
             .Where(p => p.IsActive)
+            .Include(p => p.Designation)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Policy>> GetForDepartmentAsync(string department, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Policy>> GetForDesignationAsync(Guid? designationId, string? department, CancellationToken cancellationToken = default)
     {
         return await _context.Policies
-            .Where(p => p.IsActive && (p.ApplicableDepartment == null || p.ApplicableDepartment == department))
+            .Where(p => p.IsActive)
+            .Where(p => p.DesignationId == null || p.DesignationId == designationId)
+            .Where(p => string.IsNullOrWhiteSpace(department) || p.ApplicableDepartment == null || p.ApplicableDepartment == department)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<bool> HasOverlappingActivePolicyAsync(
+        Guid? designationId,
+        DateTime effectiveFrom,
+        DateTime? effectiveTo,
+        Guid? excludePolicyId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var effectiveEnd = effectiveTo ?? DateTime.MaxValue;
+
+        return await _context.Policies
+            .Where(p => p.IsActive)
+            .Where(p => p.DesignationId == designationId)
+            .Where(p => excludePolicyId == null || p.Id != excludePolicyId)
+            .Where(p => p.EffectiveFrom <= effectiveEnd && (p.EffectiveTo ?? DateTime.MaxValue) >= effectiveFrom)
+            .AnyAsync(cancellationToken);
     }
 }
 
@@ -196,5 +216,26 @@ public class HolidayRepository : Repository<Holiday>, IHolidayRepository
     public async Task<bool> IsHolidayAsync(DateTime date, CancellationToken cancellationToken = default)
     {
         return await _context.Holidays.AnyAsync(h => h.Date == date.Date, cancellationToken);
+    }
+}
+
+public class AuditLogRepository : Repository<AuditLog>, IAuditLogRepository
+{
+    public AuditLogRepository(ApplicationDbContext context) : base(context) { }
+
+    public async Task<IReadOnlyList<AuditLog>> GetRecentAsync(int count = 50, CancellationToken cancellationToken = default)
+    {
+        return await _context.AuditLogs
+            .OrderByDescending(a => a.Timestamp)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<AuditLog>> GetByEntityAsync(string entityName, string entityId, CancellationToken cancellationToken = default)
+    {
+        return await _context.AuditLogs
+            .Where(a => a.EntityName == entityName && a.EntityId == entityId)
+            .OrderByDescending(a => a.Timestamp)
+            .ToListAsync(cancellationToken);
     }
 }

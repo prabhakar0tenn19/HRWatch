@@ -20,7 +20,13 @@ public class PolicyConfiguration : IEntityTypeConfiguration<Policy>
         builder.Property(p => p.CreatedBy).HasMaxLength(200);
         builder.Property(p => p.UpdatedBy).HasMaxLength(200);
 
+        builder.HasOne(p => p.Designation)
+            .WithMany()
+            .HasForeignKey(p => p.DesignationId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.HasIndex(p => p.IsActive);
+        builder.HasIndex(p => p.DesignationId);
     }
 }
 
@@ -32,7 +38,6 @@ public class WeeklyReportConfiguration : IEntityTypeConfiguration<WeeklyReport>
         builder.HasKey(r => r.Id);
         builder.Property(r => r.Id).ValueGeneratedNever();
 
-        // Map DateRange value object as owned entity (two columns: PeriodStart, PeriodEnd)
         builder.OwnsOne(r => r.Period, periodBuilder =>
         {
             periodBuilder.Property(p => p.Start).HasColumnName("PeriodStart");
@@ -87,6 +92,10 @@ public class ViolationConfiguration : IEntityTypeConfiguration<Violation>
             .HasConversion<string>()
             .HasMaxLength(100);
 
+        builder.Property(v => v.Severity)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         builder.Property(v => v.Description).IsRequired().HasMaxLength(1000);
         builder.Property(v => v.AcknowledgedBy).HasMaxLength(200);
         builder.Property(v => v.CreatedBy).HasMaxLength(200);
@@ -105,6 +114,7 @@ public class ViolationConfiguration : IEntityTypeConfiguration<Violation>
         builder.HasIndex(v => v.EmployeeId);
         builder.HasIndex(v => v.OccurredOn);
         builder.HasIndex(v => v.IsAcknowledged);
+        builder.HasIndex(v => v.Severity);
     }
 }
 
@@ -137,5 +147,25 @@ public class HolidayConfiguration : IEntityTypeConfiguration<Holiday>
         builder.Property(h => h.CreatedBy).HasMaxLength(200);
         builder.Property(h => h.UpdatedBy).HasMaxLength(200);
         builder.HasIndex(h => h.Date);
+    }
+}
+
+public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
+{
+    public void Configure(EntityTypeBuilder<AuditLog> builder)
+    {
+        builder.ToTable("AuditLogs");
+        builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id).ValueGeneratedNever();
+
+        builder.Property(a => a.Action).IsRequired().HasMaxLength(100);
+        builder.Property(a => a.EntityName).IsRequired().HasMaxLength(100);
+        builder.Property(a => a.EntityId).IsRequired().HasMaxLength(100);
+        builder.Property(a => a.PerformedBy).IsRequired().HasMaxLength(200);
+        builder.Property(a => a.Details).HasMaxLength(2000);
+
+        builder.HasIndex(a => a.Timestamp);
+        builder.HasIndex(a => a.Action);
+        builder.HasIndex(a => new { a.EntityName, a.EntityId });
     }
 }
