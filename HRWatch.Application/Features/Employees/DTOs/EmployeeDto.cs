@@ -27,6 +27,7 @@ public record ExternalEmployeeDto
     public string LastName { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
     public string Department { get; init; } = string.Empty;
+    public string Designation { get; init; } = string.Empty;
     public DateTime JoinDate { get; init; }
     public bool IsActive { get; init; } = true;
 }

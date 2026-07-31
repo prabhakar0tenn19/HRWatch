@@ -63,11 +63,11 @@ public class EmployeeClient : IEmployeeApiClient
 
     public async Task<IReadOnlyList<ExternalEmployeeDto>> GetAllEmployeesAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogDebug("Calling Employee API: GET /employees");
+        _logger.LogDebug("Calling Employee API: GET /api/employees");
 
         try
         {
-            var response = await _httpClient.GetAsync("/employees", cancellationToken);
+            var response = await _httpClient.GetAsync("/api/employees", cancellationToken);
 
             if (!response.IsSuccessStatusCode)
                 throw new ExternalApiException("EmployeeApi",

@@ -51,7 +51,7 @@ public class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, Employe
             .Take(query.PageSize)
             .ToList();
 
-        // Map entities → DTOs
+        
         var dtos = paged.Select(e => new EmployeeDto
         {
             Id          = e.Id,

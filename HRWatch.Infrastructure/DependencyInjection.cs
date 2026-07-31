@@ -74,6 +74,7 @@ public static class DependencyInjection
         services.AddScoped<IWeeklyReportRepository, WeeklyReportRepository>();
         services.AddScoped<IViolationRepository, ViolationRepository>();
         services.AddScoped<IHolidayRepository, HolidayRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
     }
 
     private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
