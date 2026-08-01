@@ -53,4 +53,20 @@ public class EmployeesController : ControllerBase
             ? Ok(new { message = "Sync completed.", data = result.Value })
             : BadRequest(new { error = result.Error.Message, code = result.Error.Code });
     }
+
+
+
+    [HttpGet("{id:guid}")]
+public async Task<IActionResult> GetEmployeeById(
+    [FromRoute] Guid id,
+    CancellationToken cancellationToken = default)
+{
+    var query = new GetEmployeeByIdQuery(id);
+    var result = await _queryMediator.SendAsync(query, cancellationToken);
+
+    return result.IsSuccess
+        ? Ok(result.Value)
+        : NotFound(new { error = result.Error.Message, code = result.Error.Code });
+}
+
 }
