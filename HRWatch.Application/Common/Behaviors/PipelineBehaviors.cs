@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HRWatch.Application.Common.Behaviors;
 
-public class ValidationBehavior<TCommand, TResult>
+public class ValidationBehavior<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
     private readonly ICommandHandler<TCommand, TResult> _next;
@@ -41,7 +41,7 @@ public class ValidationBehavior<TCommand, TResult>
     }
 }
 
-public class LoggingBehavior<TCommand, TResult>
+public class LoggingBehavior<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
     private readonly ICommandHandler<TCommand, TResult> _next;

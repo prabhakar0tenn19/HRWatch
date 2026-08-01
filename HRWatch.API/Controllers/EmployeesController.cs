@@ -2,6 +2,9 @@ using HRWatch.Application.Common.Abstractions;
 using HRWatch.Application.Features.Employees.Commands.SyncEmployees;
 using HRWatch.Application.Features.Employees.Queries.GetEmployees;
 using Microsoft.AspNetCore.Mvc;
+using HRWatch.Application.Features.Employees.Queries.GetEmployeeById;
+using HRWatch.Application.Features.Employees.Commands.CreateEmployee;
+
 
 namespace HRWatch.API.Controllers;
 
@@ -68,5 +71,27 @@ public async Task<IActionResult> GetEmployeeById(
         ? Ok(result.Value)
         : NotFound(new { error = result.Error.Message, code = result.Error.Code });
 }
+
+
+
+[HttpPost]
+public async Task<IActionResult> CreateEmployee(
+    [FromBody] CreateEmployeeCommand command,
+    CancellationToken cancellationToken = default)
+{
+    var result = await _commandMediator.SendAsync(command, cancellationToken);
+
+    return result.IsSuccess
+    ? CreatedAtAction(
+        nameof(GetEmployeeById),
+        new { id = result.Value },
+        result.Value)
+    : BadRequest(new
+    {
+        error = result.Error.Message,
+        code = result.Error.Code
+    });
+}
+
 
 }
