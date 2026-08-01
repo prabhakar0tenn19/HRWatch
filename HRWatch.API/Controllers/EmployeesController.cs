@@ -4,6 +4,7 @@ using HRWatch.Application.Features.Employees.Queries.GetEmployees;
 using Microsoft.AspNetCore.Mvc;
 using HRWatch.Application.Features.Employees.Queries.GetEmployeeById;
 using HRWatch.Application.Features.Employees.Commands.CreateEmployee;
+using HRWatch.Application.Features.Employees.Commands.UpdateEmployee;
 
 
 namespace HRWatch.API.Controllers;
@@ -92,6 +93,22 @@ public async Task<IActionResult> CreateEmployee(
         code = result.Error.Code
     });
 }
+
+[HttpPut("{id:guid}")]
+public async Task<IActionResult> UpdateEmployee(Guid id, [FromBody] UpdateEmployeeCommand command)
+{
+    if (id != command.Id)
+    {
+        return BadRequest(new { error = "Mismatched Employee ID in URL and body." });
+    }
+
+    var result = await _commandMediator.SendAsync(command);
+
+    return result.IsSuccess
+        ? NoContent()
+        : BadRequest(new { error = result.Error.Message, code = result.Error.Code });
+}
+
 
 
 }

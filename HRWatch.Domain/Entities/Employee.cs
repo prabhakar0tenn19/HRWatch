@@ -89,9 +89,25 @@ public class Employee : AggregateRoot
         DesignationId = designationId;
         UpdatedAt = DateTime.UtcNow;
     }
-}
+
 
 public record EmployeeJoinedDomainEvent(
     Guid EmployeeId,
     string Email,
     DateTime JoinDate) : IDomainEvent;
+
+public void UpdateDetails(
+    string firstName,
+    string lastName,
+    string department,
+    string? phoneNumber,
+    string updatedBy = "system")
+{
+    FirstName = firstName;
+    LastName = lastName;
+    Department = department;
+    PhoneNumber = phoneNumber;
+    UpdatedAt = DateTime.UtcNow;
+    UpdatedBy = updatedBy;
+}
+}
