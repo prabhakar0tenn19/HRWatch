@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using HRWatch.Application.Features.Employees.Queries.GetEmployeeById;
 using HRWatch.Application.Features.Employees.Commands.CreateEmployee;
 using HRWatch.Application.Features.Employees.Commands.UpdateEmployee;
+using HRWatch.Application.Features.Employees.Commands.DeactivateEmployee;
 
 
 namespace HRWatch.API.Controllers;
@@ -108,6 +109,20 @@ public async Task<IActionResult> UpdateEmployee(Guid id, [FromBody] UpdateEmploy
         ? NoContent()
         : BadRequest(new { error = result.Error.Message, code = result.Error.Code });
 }
+
+[HttpDelete("{id:guid}")]
+public async Task<IActionResult> DeactivateEmployee(
+    [FromRoute] Guid id,
+    CancellationToken cancellationToken = default)
+{
+    var command = new DeactivateEmployeeCommand(id);
+    var result = await _commandMediator.SendAsync(command, cancellationToken);
+
+    return result.IsSuccess
+        ? NoContent()
+        : NotFound(new { error = result.Error.Message, code = result.Error.Code });
+}
+
 
 
 

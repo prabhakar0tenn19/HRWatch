@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace HRWatch.Infrastructure.ExternalApis;
 
-
+//deadcode i guess
 public class ExternalApiOptions
 {
     public ApiEndpointConfig EmployeeApi   { get; init; } = new();
@@ -17,7 +17,7 @@ public class ExternalApiOptions
     public ApiEndpointConfig LeaveApi      { get; init; } = new();
     public ApiEndpointConfig HolidayApi    { get; init; } = new();
 }
-
+//this class is also dead code
 public class ApiEndpointConfig
 {
     public string BaseUrl { get; init; } = string.Empty;

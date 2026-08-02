@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HRWatch.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c1066c09c1798a5ed639c809df16730d5671933b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a657deebdc313b57e550a4e2edd5cbef30c346ea")]
 [assembly: System.Reflection.AssemblyProductAttribute("HRWatch.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HRWatch.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
