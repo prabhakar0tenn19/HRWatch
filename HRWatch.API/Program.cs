@@ -98,7 +98,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "HRWatch API failed to start.");
+    Log.Fatal(ex, "HRWatch API failed to start!");
     throw;
 }
 finally
