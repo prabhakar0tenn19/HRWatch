@@ -1,17 +1,17 @@
 namespace HRWatch.Domain.Common;
 
-/// <summary>
+
 /// Marker interface for domain events.
 /// Domain events represent things that HAPPENED in the business domain.
 /// e.g., EmployeeJoinedEvent, AttendanceViolationDetectedEvent
 /// These can be dispatched after saving to trigger side effects (notifications, audit logs).
-/// </summary>
+
 public interface IDomainEvent { }
 
-/// <summary>
+
 /// Base for entities that can raise domain events.
 /// Handlers read these events after saving and dispatch them as needed.
-/// </summary>
+
 public abstract class AggregateRoot : AuditableEntity
 {
     private readonly List<IDomainEvent> _domainEvents = [];

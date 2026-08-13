@@ -2,11 +2,10 @@ using HRWatch.Application.Common.Abstractions;
 
 namespace HRWatch.Application.Features.Reports.Queries.GetLatestWeeklyReport;
 
-/// <summary>Query: Get the most recently generated weekly report</summary>
+/// Query: Get the most recently generated weekly report
 public record GetLatestWeeklyReportQuery : IQuery<WeeklyReportDto?> { }
 
-// ── DTOs ─────────────────────────────────────────────────────────────────────
-
+//  DTOs
 public record WeeklyReportDto
 {
     public Guid     Id                    { get; init; }

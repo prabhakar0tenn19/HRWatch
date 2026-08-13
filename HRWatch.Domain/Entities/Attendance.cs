@@ -4,10 +4,10 @@ using HRWatch.Domain.ValueObjects;
 
 namespace HRWatch.Domain.Entities;
 
-/// <summary>
+
 /// Represents a single attendance record for an employee on a specific date.
 /// Each record comes from the external Attendance API and is processed by the sync job.
-/// </summary>
+
 public class Attendance : AuditableEntity
 {
     public Guid EmployeeId { get; private set; }
@@ -15,25 +15,24 @@ public class Attendance : AuditableEntity
 
     public DateTime Date { get; private set; }
 
-    /// <summary>Actual clock-in time. Null if employee was absent/holiday.</summary>
+    /// Actual clock-in time. Null if employee was absent/holiday.
     public TimeSpan? CheckIn { get; private set; }
 
-    /// <summary>Actual clock-out time. Null if employee was absent/holiday.</summary>
+    /// Actual clock-out time. Null if employee was absent/holiday.
     public TimeSpan? CheckOut { get; private set; }
 
     public AttendanceStatus Status { get; private set; }
 
-    /// <summary>Total work hours computed from CheckIn/CheckOut using WorkHours value object</summary>
+    /// Total work hours computed from CheckIn/CheckOut using WorkHours value object
     public decimal? TotalWorkHours { get; private set; }
 
-    /// <summary>Remarks from the HR system or computed by compliance engine</summary>
+    /// Remarks from the HR system or computed by compliance engine
     public string? Remarks { get; private set; }
 
-    /// <summary>External reference ID from the attendance API</summary>
+    /// External reference ID from the attendance API
     public string? ExternalReferenceId { get; private set; }
 
-    // ── Factory Method ───────────────────────────────────────────────────────
-
+    // ── Factory Method 
     public static Attendance Create(
         Guid employeeId,
         DateTime date,
@@ -65,8 +64,7 @@ public class Attendance : AuditableEntity
         return attendance;
     }
 
-    // ── Behavior Methods ─────────────────────────────────────────────────────
-
+    // ── Behavior Methods 
     public void AddRemarks(string remarks)
     {
         Remarks   = remarks;

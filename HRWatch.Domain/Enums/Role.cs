@@ -1,25 +1,25 @@
 namespace HRWatch.Domain.Enums;
 
-/// <summary>
+
 /// Employee roles within the organization hierarchy.
-/// </summary>
+
 public enum Role
 {
-    /// <summary>Individual contributor with no management responsibilities</summary>
+    /// Individual contributor with no management responsibilities
     Employee = 1,
 
-    /// <summary>Team lead — manages a small team, still contributes individually</summary>
+    /// Team lead — manages a small team, still contributes individually
     TeamLead = 2,
 
-    /// <summary>Manager — manages employees, responsible for approvals</summary>
+    /// Manager — manages employees, responsible for approvals
     Manager = 3,
 
-    /// <summary>HR personnel — manages policies, leave, reports</summary>
+    /// HR personnel — manages policies, leave, reports
     HRManager = 4,
 
-    /// <summary>Department head or director</summary>
+    /// Department head or director
     Director = 5,
 
-    /// <summary>System administrator — platform configuration access</summary>
+    /// System administrator — platform configuration access
     Admin = 6
 }

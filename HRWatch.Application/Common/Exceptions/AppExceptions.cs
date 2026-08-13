@@ -20,9 +20,9 @@ public class DomainException : Exception
     }
 }
 
-/// <summary>
+
 /// Thrown when an external API call fails.
-/// </summary>
+
 public class ExternalApiException : Exception
 {
     public string ApiName  { get; }

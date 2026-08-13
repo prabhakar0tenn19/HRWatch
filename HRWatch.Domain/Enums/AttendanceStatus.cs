@@ -1,31 +1,31 @@
 namespace HRWatch.Domain.Enums;
 
-/// <summary>
+
 /// Represents what happened with an employee's attendance for a given day.
-/// </summary>
+
 public enum AttendanceStatus
 {
-    /// <summary>Employee was present and on time</summary>
+    /// Employee was present and on time
     Present = 1,
 
-    /// <summary>Employee was absent without approval</summary>
+    /// Employee was absent without approval
     Absent = 2,
 
-    /// <summary>Employee arrived late (past the grace period defined in policy)</summary>
+    /// Employee arrived late (past the grace period defined in policy)
     Late = 3,
 
-    /// <summary>Employee left earlier than required hours</summary>
+    /// Employee left earlier than required hours
     EarlyLeave = 4,
 
-    /// <summary>Employee is on approved leave</summary>
+    /// Employee is on approved leave
     OnLeave = 5,
 
-    /// <summary>Public holiday — attendance not required</summary>
+    /// Public holiday — attendance not required
     Holiday = 6,
 
-    /// <summary>Weekend — attendance not required</summary>
+    /// Weekend — attendance not required
     Weekend = 7,
 
-    /// <summary>Employee worked from home (if WFH policy enabled)</summary>
+    /// Employee worked from home (if WFH policy enabled)
     WorkFromHome = 8
 }

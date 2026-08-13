@@ -23,10 +23,10 @@ public class WeeklyReportEntry : AuditableEntity
     public int DaysOnLeave    { get; private set; }
     public int ViolationCount { get; private set; }
 
-    /// <summary>Total hours worked during the week</summary>
+    /// Total hours worked during the week
     public decimal TotalWorkHours { get; private set; }
 
-    /// <summary>Compliance score for this employee this week (0-100)</summary>
+    /// Compliance score for this employee this week (0-100)
     public decimal ComplianceScore { get; private set; }
 
     public string? Summary { get; private set; }
