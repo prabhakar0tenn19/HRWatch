@@ -32,7 +32,7 @@ public static class DependencyInjection
     {
         var assembly = Assembly.GetExecutingAssembly();
         var handlerTypes = assembly.GetTypes()
-            .Where(t => !t.IsAbstract && !t.IsInterface)
+            .Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericTypeDefinition)
             .SelectMany(t => t.GetInterfaces()
                 .Where(i => i.IsGenericType &&
                             i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>))
@@ -48,7 +48,7 @@ public static class DependencyInjection
     {
         var assembly = Assembly.GetExecutingAssembly();
         var handlerTypes = assembly.GetTypes()
-            .Where(t => !t.IsAbstract && !t.IsInterface)
+            .Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericTypeDefinition)
             .SelectMany(t => t.GetInterfaces()
                 .Where(i => i.IsGenericType &&
                             i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>))
