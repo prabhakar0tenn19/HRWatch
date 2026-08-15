@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<Attendance> Attendance => Set<Attendance>();
+    public DbSet<WeeklyAttendance> WeeklyAttendances => Set<WeeklyAttendance>();
     public DbSet<Policy> Policies => Set<Policy>();
     public DbSet<WeeklyReport> WeeklyReports => Set<WeeklyReport>();
     public DbSet<WeeklyReportEntry> WeeklyReportEntries => Set<WeeklyReportEntry>();

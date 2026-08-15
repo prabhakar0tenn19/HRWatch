@@ -17,6 +17,7 @@ public static class DependencyInjection
         services.AddTransient<PolicyEngine>();
         services.AddTransient<ComplianceEvaluator>();
         services.AddTransient<RuleEvaluator>();
+        services.AddTransient<IViolationCalculationService, ViolationCalculationService>();
 
         RegisterCommandHandlers(services);
 

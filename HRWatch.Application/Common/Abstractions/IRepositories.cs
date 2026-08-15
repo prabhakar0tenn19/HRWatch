@@ -85,3 +85,10 @@ public interface IAuditLogRepository : IRepository<AuditLog>
     Task<IReadOnlyList<AuditLog>> GetRecentAsync(int count = 50, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<AuditLog>> GetByEntityAsync(string entityName, string entityId, CancellationToken cancellationToken = default);
 }
+
+public interface IWeeklyAttendanceRepository : IRepository<WeeklyAttendance>
+{
+    Task<WeeklyAttendance?> GetByEmployeeAndWeekAsync(Guid employeeId, DateTime weekStart, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<WeeklyAttendance>> GetByWeekAsync(DateTime weekStart, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<WeeklyAttendance>> GetByMonthAsync(int year, int month, CancellationToken cancellationToken = default);
+}

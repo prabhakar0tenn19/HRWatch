@@ -169,3 +169,25 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         builder.HasIndex(a => new { a.EntityName, a.EntityId });
     }
 }
+
+public class WeeklyAttendanceConfiguration : IEntityTypeConfiguration<WeeklyAttendance>
+{
+    public void Configure(EntityTypeBuilder<WeeklyAttendance> builder)
+    {
+        builder.ToTable("WeeklyAttendances");
+        builder.HasKey(w => w.Id);
+        builder.Property(w => w.Id).ValueGeneratedNever();
+
+        builder.HasOne(w => w.Employee)
+            .WithMany()
+            .HasForeignKey(w => w.EmployeeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(w => w.RawLeaveJson).HasMaxLength(1000);
+        builder.Property(w => w.CreatedBy).HasMaxLength(200);
+        builder.Property(w => w.UpdatedBy).HasMaxLength(200);
+
+        builder.HasIndex(w => w.EmployeeId);
+        builder.HasIndex(w => new { w.EmployeeId, w.WeekStartDate });
+    }
+}

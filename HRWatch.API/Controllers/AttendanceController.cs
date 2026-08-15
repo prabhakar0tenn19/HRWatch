@@ -1,5 +1,6 @@
 using HRWatch.Application.Common.Abstractions;
 using HRWatch.Application.Features.Attendance.Commands.SyncAttendance;
+using HRWatch.Application.Features.Attendance.Commands.SyncWeeklyOverview;
 using HRWatch.Application.Features.Attendance.Queries.GetAttendance;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +48,17 @@ public class AttendanceController : ControllerBase
         var result = await _commandMediator.SendAsync(command, cancellationToken);
         return result.IsSuccess
             ? Ok(new { message = "Attendance sync completed.", data = result.Value })
+            : BadRequest(new { error = result.Error.Message, code = result.Error.Code });
+    }
+
+    [HttpPost("sync-weekly")]
+    public async Task<IActionResult> SyncWeeklyOverview(
+        [FromBody] SyncWeeklyOverviewCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _commandMediator.SendAsync(command, cancellationToken);
+        return result.IsSuccess
+            ? Ok(new { message = "Weekly Overview sync completed successfully.", data = result.Value })
             : BadRequest(new { error = result.Error.Message, code = result.Error.Code });
     }
 }

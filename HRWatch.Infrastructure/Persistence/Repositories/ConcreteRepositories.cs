@@ -239,3 +239,30 @@ public class AuditLogRepository : Repository<AuditLog>, IAuditLogRepository
             .ToListAsync(cancellationToken);
     }
 }
+
+public class WeeklyAttendanceRepository : Repository<WeeklyAttendance>, IWeeklyAttendanceRepository
+{
+    public WeeklyAttendanceRepository(ApplicationDbContext context) : base(context) { }
+
+    public async Task<WeeklyAttendance?> GetByEmployeeAndWeekAsync(Guid employeeId, DateTime weekStart, CancellationToken cancellationToken = default)
+    {
+        return await _context.WeeklyAttendances
+            .FirstOrDefaultAsync(w => w.EmployeeId == employeeId && w.WeekStartDate == weekStart.Date, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<WeeklyAttendance>> GetByWeekAsync(DateTime weekStart, CancellationToken cancellationToken = default)
+    {
+        return await _context.WeeklyAttendances
+            .Include(w => w.Employee)
+            .Where(w => w.WeekStartDate == weekStart.Date)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<WeeklyAttendance>> GetByMonthAsync(int year, int month, CancellationToken cancellationToken = default)
+    {
+        return await _context.WeeklyAttendances
+            .Include(w => w.Employee)
+            .Where(w => w.WeekStartDate.Year == year && w.WeekStartDate.Month == month)
+            .ToListAsync(cancellationToken);
+    }
+}
