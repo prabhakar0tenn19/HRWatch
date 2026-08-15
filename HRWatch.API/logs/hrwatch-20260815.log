@@ -1,9 +1,0 @@
-2026-08-15 21:43:41.393 +05:30 [INF] Starting HRWatch API...
-2026-08-15 21:43:42.000 +05:30 [FTL] HRWatch API failed to start!
-System.ArgumentException: Cannot instantiate implementation type 'HRWatch.Application.Common.Behaviors.ValidationBehavior`2[TCommand,TResult]' for service type 'HRWatch.Application.Common.Abstractions.ICommandHandler`2[TCommand,TResult]'.
-   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.Populate()
-   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
-   at Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(IServiceCollection services, ServiceProviderOptions options)
-   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
-   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
-   at Program.<Main>$(String[] args) in C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Api\Program.cs:line 43
