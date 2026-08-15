@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fLIxByPg70Y=",
+  "dgSpecHash": "PHTVQ+YjQZQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\USER\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
@@ -107,9 +107,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-23rf-6693-g89p",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
@@ -119,9 +119,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
@@ -131,9 +131,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-6588-8gv4-xfgh",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
@@ -143,9 +143,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-8q5v-6pqq-x66h",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
@@ -155,9 +155,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-cvvh-rhrc-wg4q",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
@@ -167,9 +167,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-g8r8-53c2-pm3f",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
@@ -179,9 +179,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-mmjf-rqrv-855v",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
@@ -191,9 +191,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf",
-      "projectPath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\USER\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
+      "filePath": "C:\\Users\\USER\\OneDrive\\Desktop\\HRWatch\\HRWatch\\HRWatch.Infrastructure\\HRWatch.Infrastructure.csproj",
       "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"

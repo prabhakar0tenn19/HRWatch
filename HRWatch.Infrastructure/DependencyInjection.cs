@@ -35,9 +35,6 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
-        services.Configure<ExternalApiOptions>(
-            configuration.GetSection("ExternalApis"));
-
         RegisterHttpClients(services, configuration);
 
         services.AddHangfire(config => config
@@ -80,9 +77,13 @@ public static class DependencyInjection
     private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
     {
         var employeeBaseUrl = configuration["ExternalApis:EmployeeApi:BaseUrl"] ?? "https://localhost";
-        var attendanceBaseUrl = configuration["ExternalApis:AttendanceApi:BaseUrl"] ?? "https://localhost";
-        var leaveBaseUrl = configuration["ExternalApis:LeaveApi:BaseUrl"] ?? "https://localhost";
-        var holidayBaseUrl = configuration["ExternalApis:HolidayApi:BaseUrl"] ?? "https://localhost";
+
+        services.AddHttpClient<IEmployeeWeeklyOverviewApiClient, EmployeeWeeklyOverviewApiClient>(client =>
+        {
+            client.BaseAddress = new Uri(employeeBaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
 
         services.AddHttpClient<IEmployeeApiClient, EmployeeClient>(client =>
         {
@@ -93,21 +94,9 @@ public static class DependencyInjection
 
         services.AddHttpClient<IAttendanceApiClient, AttendanceClient>(client =>
         {
-            client.BaseAddress = new Uri(attendanceBaseUrl);
+            client.BaseAddress = new Uri(employeeBaseUrl);
             client.Timeout = TimeSpan.FromSeconds(30);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-        });
-
-        services.AddHttpClient<ILeaveApiClient, LeaveClient>(client =>
-        {
-            client.BaseAddress = new Uri(leaveBaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(30);
-        });
-
-        services.AddHttpClient<IHolidayApiClient, HolidayClient>(client =>
-        {
-            client.BaseAddress = new Uri(holidayBaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(30);
         });
     }
 }

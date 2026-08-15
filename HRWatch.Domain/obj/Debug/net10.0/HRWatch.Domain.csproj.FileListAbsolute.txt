@@ -10,3 +10,15 @@ C:\Users\USER\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.D
 C:\Users\USER\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\refint\HRWatch.Domain.dll
 C:\Users\USER\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.pdb
 C:\Users\USER\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\ref\HRWatch.Domain.dll
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\bin\Debug\net10.0\HRWatch.Domain.deps.json
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\bin\Debug\net10.0\HRWatch.Domain.dll
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\bin\Debug\net10.0\HRWatch.Domain.pdb
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.AssemblyInfoInputs.cache
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.AssemblyInfo.cs
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.csproj.CoreCompileInputs.cache
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.sourcelink.json
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.dll
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\refint\HRWatch.Domain.dll
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\HRWatch.Domain.pdb
+C:\Users\USER\OneDrive\Desktop\HRWatch\HRWatch\HRWatch.Domain\obj\Debug\net10.0\ref\HRWatch.Domain.dll
