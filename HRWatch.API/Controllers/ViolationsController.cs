@@ -20,10 +20,9 @@ public class ViolationsController : ControllerBase
     public async Task<IActionResult> GetWeeklyViolators(
         [FromQuery] DateTime? weekStartDate = null,
         [FromQuery] string? designation = null,
-        [FromQuery] string? department = null,
         CancellationToken cancellationToken = default)
     {
-        var query = new GetWeeklyViolatorsQuery(weekStartDate, designation, department);
+        var query = new GetWeeklyViolatorsQuery(weekStartDate, designation);
         var result = await _queryMediator.SendAsync(query, cancellationToken);
 
         return result.IsSuccess
