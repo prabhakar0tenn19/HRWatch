@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="HRWatch.API/HRWatch.API.csproj" />
+  <Project Path="HRWatch.Application/HRWatch.Application.csproj" />
+  <Project Path="HRWatch.Domain/HRWatch.Domain.csproj" />
+  <Project Path="HRWatch.Infrastructure/HRWatch.Infrastructure.csproj" />
+  <Project Path="HRWatch.Tests/HRWatch.Tests.csproj" />
+</Solution>

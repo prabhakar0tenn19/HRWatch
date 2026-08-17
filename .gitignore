@@ -1,0 +1,54 @@
+## Build and Output Folders
+bin/
+obj/
+out/
+build/
+
+## Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+## Test Results & Coverage
+TestResults/
+[Tt]est[Rr]esult*
+coverage.json
+coverage.cobertura.xml
+*.coverage
+*.coveragexml
+
+## JetBrains Rider
+.idea/
+*.sln.iml
+
+## Logs & Temp
+*.log
+_ReSharper*/
+*.resharper
+[Aa]pp_Data/
+*.tmp
+*.temp
+
+## Environment & Secrets (Keep templates committed, ignore local secrets if any)
+*.local.json
+.env
+.env.*
+!.env.example
+
+## OS Generated
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
