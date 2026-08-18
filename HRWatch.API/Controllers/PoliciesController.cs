@@ -35,6 +35,21 @@ public class PoliciesController : ControllerBase
     }
 
     /// <summary>
+    /// Gets the full historical audit trail of all policy versions (active and archived).
+    /// </summary>
+    [HttpGet("history")]
+    public async Task<IActionResult> GetPolicyHistory(CancellationToken cancellationToken)
+    {
+        var result = await _queryMediator.QueryAsync(new HRWatch.Application.Features.Policies.Queries.GetPolicyHistory.GetPolicyHistoryQuery(), cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { result.ErrorMessage, result.ErrorCode });
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Activates a new version of WFO policy and archives the previous version.
     /// </summary>
     [HttpPost("new-version")]
