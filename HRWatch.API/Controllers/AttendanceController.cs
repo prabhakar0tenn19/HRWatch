@@ -52,6 +52,32 @@ public class AttendanceController : ControllerBase
     }
 
     /// <summary>
+    /// Evaluates attendance for a whole date range (e.g. from Monday to Friday), fetches biometric logs & leaves for each day, and stores all records in DB.
+    /// </summary>
+    [HttpPost("evaluate-range")]
+    public async Task<IActionResult> EvaluateRange(
+        [FromQuery] DateOnly startDate,
+        [FromQuery] DateOnly endDate,
+        CancellationToken cancellationToken)
+    {
+        if (startDate > endDate)
+        {
+            return BadRequest(new { ErrorMessage = "startDate cannot be after endDate" });
+        }
+
+        var result = await _commandMediator.SendAsync(
+            new HRWatch.Application.Features.Attendance.Commands.EvaluateDateRange.EvaluateDateRangeCommand(startDate, endDate, "ManualApiTrigger"),
+            cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { result.ErrorMessage, result.ErrorCode });
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Returns the calendar view (P, L, E, A, WO, H) for employees within a date range.
     /// </summary>
     [HttpGet("calendar")]
