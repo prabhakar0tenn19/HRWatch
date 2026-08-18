@@ -86,9 +86,50 @@ public class EvaluateDailyAttendanceCommandHandler : ICommandHandler<EvaluateDai
                 new EvaluateDailyAttendanceResult(targetDate, activeEmployees.Count, 0, 0, 0, 0, activeEmployees.Count, DateTime.UtcNow));
         }
 
-        // 4. Fetch Biometric Present User IDs from Matrix COSEC API
-        var presentPunchCodes = await _cosecClient.GetPresentEmployeeCodesForDateAsync(targetDate, cancellationToken);
-        _logger.LogInformation("COSEC Biometric returned {Count} distinct present punch codes for {Date}",
+        // 4. Fetch Biometric Punches from Matrix COSEC API and save to DailyPunchLogs
+        var targetDateTime = targetDate.ToDateTime(TimeOnly.MinValue);
+        var punchRecords = await _cosecClient.GetPunchesForDateRangeAsync(targetDateTime, targetDateTime, cancellationToken);
+        _logger.LogInformation("COSEC Biometric returned {Count} raw punch records for {Date}",
+            punchRecords.Count, targetDate);
+
+        var empCodeToIdMap = activeEmployees.ToDictionary(e => e.EmployeeCode.Trim().ToUpperInvariant(), e => e.Id);
+        var existingPunchLogs = await _dbContext.DailyPunchLogs
+            .Where(p => p.PunchDate == targetDate)
+            .Select(p => p.RawLogIndex)
+            .Where(idx => idx != null)
+            .ToHashSetAsync(cancellationToken);
+
+        var newPunchLogs = new List<DailyPunchLog>();
+        foreach (var pr in punchRecords)
+        {
+            if (pr.IndexNo != null && existingPunchLogs.Contains(pr.IndexNo))
+                continue;
+
+            empCodeToIdMap.TryGetValue(pr.EmployeeCode.Trim().ToUpperInvariant(), out var matchedEmpId);
+            newPunchLogs.Add(new DailyPunchLog
+            {
+                EmployeeCode = pr.EmployeeCode.Trim(),
+                EmployeeId = matchedEmpId != Guid.Empty ? matchedEmpId : null,
+                PunchDate = pr.PunchDate,
+                PunchTime = pr.PunchTime,
+                DeviceName = pr.DeviceName,
+                EntryExitType = pr.EntryExitType,
+                RawLogIndex = pr.IndexNo,
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+
+        if (newPunchLogs.Count > 0)
+        {
+            await _dbContext.DailyPunchLogs.AddRangeAsync(newPunchLogs, cancellationToken);
+        }
+
+        var presentPunchCodes = punchRecords
+            .Where(r => r.PunchDate == targetDate && !string.IsNullOrWhiteSpace(r.EmployeeCode))
+            .Select(r => r.EmployeeCode.Trim().ToUpperInvariant())
+            .ToHashSet();
+
+        _logger.LogInformation("Found {Count} distinct present punch codes for {Date}",
             presentPunchCodes.Count, targetDate);
 
         // 5. Fetch Active Exceptions for this date
