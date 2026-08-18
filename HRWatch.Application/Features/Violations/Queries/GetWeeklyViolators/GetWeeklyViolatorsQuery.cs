@@ -25,6 +25,7 @@ public record WeeklyViolatorDto(
     int RequiredDays,
     int ActualPresentDays,
     int LeaveDays,
+    int WfhDays,
     int AbsentDays,
     int ShortfallDays,
     string Severity);
@@ -92,6 +93,7 @@ public class GetWeeklyViolatorsQueryHandler : IQueryHandler<GetWeeklyViolatorsQu
 
             int presentDays = empAtts.Count(a => a.Status == AttendanceStatus.P);
             int leaveDays = empAtts.Count(a => a.Status == AttendanceStatus.L);
+            int wfhDays = empAtts.Count(a => a.Status == AttendanceStatus.W);
             int absentDays = empAtts.Count(a => a.Status == AttendanceStatus.A);
 
             int requiredDays = _wfoService.GetRequiredWfoDays(emp.Designation, emp.IsDeployed, rulesJson);
@@ -111,6 +113,7 @@ public class GetWeeklyViolatorsQueryHandler : IQueryHandler<GetWeeklyViolatorsQu
                     requiredDays,
                     presentDays,
                     leaveDays,
+                    wfhDays,
                     absentDays,
                     shortfall,
                     severity?.ToString() ?? "Low"));
