@@ -1,6 +1,7 @@
 using HRWatch.Application.Common;
 using HRWatch.Application.Common.Interfaces;
 using HRWatch.Domain.Entities;
+using HRWatch.Domain.Enums;
 using LiteBus.Commands.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -44,7 +45,7 @@ public class CreateExceptionCommandHandler : ICommandHandler<CreateExceptionComm
             return Result<Guid>.Failure("Employee not found.", "NOT_FOUND");
         }
 
-        // Check overlapping active exceptions for this employee
+        // 1. Check overlapping active exceptions for this employee
         bool hasOverlap = await _dbContext.EmployeeExceptions
             .AnyAsync(e => e.EmployeeId == command.EmployeeId &&
                            e.IsActive &&
@@ -59,6 +60,7 @@ public class CreateExceptionCommandHandler : ICommandHandler<CreateExceptionComm
             return Result<Guid>.Failure("An active exception already exists for this employee within the selected date range.", "OVERLAPPING_EXCEPTION");
         }
 
+        // 2. Create and Save Exception
         var exception = new EmployeeException
         {
             EmployeeId = command.EmployeeId,
@@ -71,10 +73,29 @@ public class CreateExceptionCommandHandler : ICommandHandler<CreateExceptionComm
         };
 
         await _dbContext.EmployeeExceptions.AddAsync(exception, cancellationToken);
+
+        // 3. INSTANT ATTENDANCE RECONCILIATION:
+        // If DailyAttendance records already exist in this date range with Status == Absent ('A'),
+        // immediately convert them to Exception ('E') so weekly violators update in real-time!
+        var existingAttendances = await _dbContext.DailyAttendances
+            .Where(a => a.EmployeeId == command.EmployeeId &&
+                        a.Date >= command.FromDate &&
+                        a.Date <= command.ToDate &&
+                        a.Status == AttendanceStatus.A)
+            .ToListAsync(cancellationToken);
+
+        foreach (var att in existingAttendances)
+        {
+            att.Status = AttendanceStatus.E;
+            att.LeaveType = $"Exception: {command.Reason.Trim()}";
+            att.UpdatedAt = DateTime.UtcNow;
+            _dbContext.DailyAttendances.Update(att);
+        }
+
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Exception created for Employee {EmpId} from {From} to {To} by {User}",
-            command.EmployeeId, command.FromDate, command.ToDate, command.CreatedBy);
+        _logger.LogInformation("Exception created for Employee {EmpId} from {From} to {To} by {User}. Reconciled {Count} existing absent attendance records.",
+            command.EmployeeId, command.FromDate, command.ToDate, command.CreatedBy, existingAttendances.Count);
 
         return Result<Guid>.Success(exception.Id);
     }
