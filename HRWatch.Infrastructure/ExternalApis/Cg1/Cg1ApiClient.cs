@@ -17,9 +17,16 @@ public class Cg1ApiClient : ICg1ApiClient
         _logger = logger;
 
         var baseUrl = configuration["CG1:BaseUrl"] ?? "https://localhost:5092";
+        var secretKey = configuration["CG1:SecretKey"] ?? "__EmployeeWeeklyOverviewSecretKey__";
+
         if (_httpClient.BaseAddress == null)
         {
             _httpClient.BaseAddress = new Uri(baseUrl);
+        }
+
+        if (!_httpClient.DefaultRequestHeaders.Contains("Secret-Key") && !string.IsNullOrWhiteSpace(secretKey))
+        {
+            _httpClient.DefaultRequestHeaders.Add("Secret-Key", secretKey);
         }
     }
 
@@ -38,7 +45,17 @@ public class Cg1ApiClient : ICg1ApiClient
             }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            return JsonSerializer.Deserialize<List<Cg1EmployeeDto>>(json, JsonOptions) ?? [];
+            var allEmployees = JsonSerializer.Deserialize<List<Cg1EmployeeDto>>(json, JsonOptions) ?? [];
+
+            // Filter for India (Offshore) employees only
+            var indiaEmployees = allEmployees
+                .Where(e => string.Equals(e.Location?.Trim(), "Offshore", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            _logger.LogInformation("CG1 Master API returned {Total} total employees, filtered {Count} India (Offshore) employees",
+                allEmployees.Count, indiaEmployees.Count);
+
+            return indiaEmployees;
         }
         catch (Exception ex)
         {

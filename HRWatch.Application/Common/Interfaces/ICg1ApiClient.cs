@@ -6,12 +6,13 @@ public record Cg1EmployeeDto(
     [property: JsonPropertyName("id")] int Id,
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("email")] string Email,
+    [property: JsonPropertyName("employeeCode")] string? EmployeeCode,
+    [property: JsonPropertyName("location")] string? Location,
     [property: JsonPropertyName("designation")] string Designation,
     [property: JsonPropertyName("startDate")] DateTime StartDate,
     [property: JsonPropertyName("endDate")] DateTime EndDate,
-    [property: JsonPropertyName("leave")] List<string> Leave,
-    [property: JsonPropertyName("isDeployed")] bool IsDeployed,
-    [property: JsonPropertyName("employeeCode")] string? EmployeeCode);
+    [property: JsonPropertyName("leave")] List<string>? Leave,
+    [property: JsonPropertyName("isDeployed")] bool IsDeployed);
 
 public interface ICg1ApiClient
 {
