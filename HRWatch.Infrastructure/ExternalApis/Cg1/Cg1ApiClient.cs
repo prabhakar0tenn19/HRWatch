@@ -75,8 +75,8 @@ public class Cg1ApiClient : ICg1ApiClient
             return [];
         }
 
-        var dateStart = date.ToString("yyyy-MM-ddT00:00:00");
-        var dateEnd = date.ToString("yyyy-MM-ddT23:59:59");
+        var dateStart = $"{date:yyyy-MM-dd}T00:00:00";
+        var dateEnd = $"{date:yyyy-MM-dd}T23:59:59";
 
         var queryParams = string.Join("&", emailList.Select(e => $"emailIds={Uri.EscapeDataString(e.Trim())}"));
         var url = $"/api/v2/EmployeeWeeklyOverview/by-emails?{queryParams}&startDate={dateStart}&endDate={dateEnd}";
