@@ -49,9 +49,9 @@ public class PoliciesController : ControllerBase
         return Ok(result.Value);
     }
 
-    /// <summary>
+    
     /// Activates a new version of WFO policy and archives the previous version.
-    /// </summary>
+   
     [HttpPost("new-version")]
     public async Task<IActionResult> CreateNewVersion([FromBody] CreateNewPolicyVersionCommand command, CancellationToken cancellationToken)
     {

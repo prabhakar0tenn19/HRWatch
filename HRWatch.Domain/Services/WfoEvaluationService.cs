@@ -36,7 +36,7 @@ public class WfoEvaluationService : IWfoEvaluationService
             }
             catch
             {
-                // Fallback to standard policy.md rules
+                // Fallback to standard policy rules
             }
         }
 
@@ -72,14 +72,32 @@ public class WfoEvaluationService : IWfoEvaluationService
         return 5;
     }
 
-    public (bool IsViolator, int Shortfall, ViolationSeverity? Severity) EvaluateWeeklyCompliance(int actualPresentDays, int requiredDays)
+    public (bool IsViolator, int Shortfall, ViolationSeverity? Severity) EvaluateWeeklyCompliance(
+        int actualPresentDays, 
+        int requiredDays,
+        int approvedLeaveDays = 0,
+        int approvedWfhDays = 0,
+        int exceptionDays = 0,
+        int absentDays = 0)
     {
-        if (actualPresentDays >= requiredDays)
+        // 1. Effective required WFO days adjusts when an employee takes approved leaves or exceptions
+        // (e.g. If SDE required 5 days, but took 2 approved leaves, effective target for remaining days is 3 days).
+        int effectiveRequiredWfo = Math.Max(0, requiredDays - approvedLeaveDays - exceptionDays);
+
+        // 2. If employee came for their effective required WFO days and has 0 unauthorized absences, they are fully compliant!
+        if (actualPresentDays >= effectiveRequiredWfo && absentDays == 0)
         {
             return (false, 0, null);
         }
 
-        int shortfall = requiredDays - actualPresentDays;
+        // 3. Shortfall is determined by unapproved absences or remaining deficit
+        int shortfall = Math.Max(absentDays, effectiveRequiredWfo - actualPresentDays);
+
+        if (shortfall <= 0)
+        {
+            return (false, 0, null);
+        }
+
         var severity = shortfall switch
         {
             1 => ViolationSeverity.Low,

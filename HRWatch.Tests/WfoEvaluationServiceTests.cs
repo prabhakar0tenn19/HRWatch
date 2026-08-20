@@ -37,22 +37,30 @@ public class WfoEvaluationServiceTests
     }
 
     [Theory]
-    [InlineData(5, 5, false, 0, null)]
-    [InlineData(4, 5, true, 1, ViolationSeverity.Low)]
-    [InlineData(3, 5, true, 2, ViolationSeverity.Medium)]
-    [InlineData(2, 5, true, 3, ViolationSeverity.High)]
-    [InlineData(0, 5, true, 5, ViolationSeverity.High)]
-    [InlineData(3, 3, false, 0, null)]
-    [InlineData(2, 3, true, 1, ViolationSeverity.Low)]
-    [InlineData(1, 3, true, 2, ViolationSeverity.Medium)]
+    [InlineData(5, 5, 0, 0, 0, 0, false, 0, null)]
+    [InlineData(4, 5, 0, 0, 0, 1, true, 1, ViolationSeverity.Low)]
+    [InlineData(3, 5, 0, 0, 0, 2, true, 2, ViolationSeverity.Medium)]
+    [InlineData(2, 5, 0, 0, 0, 3, true, 3, ViolationSeverity.High)]
+    [InlineData(0, 5, 0, 0, 0, 5, true, 5, ViolationSeverity.High)]
+    [InlineData(3, 3, 0, 2, 0, 0, false, 0, null)] // Manager 3 P + 2 WFH + 0 A = Compliant
+    [InlineData(2, 3, 0, 2, 0, 1, true, 1, ViolationSeverity.Low)] // Manager 2 P + 2 WFH + 1 A = Violator (Low)
+    [InlineData(3, 5, 2, 0, 0, 0, false, 0, null)] // SDE 3 P + 2 Approved Leaves + 0 A = Compliant!
+    [InlineData(2, 5, 2, 0, 0, 1, true, 1, ViolationSeverity.Low)] // SDE 2 P + 2 Leaves + 1 A = Violator (1 shortfall)
+    [InlineData(0, 5, 5, 0, 0, 0, false, 0, null)] // SDE full week on approved leave = Compliant!
+    [InlineData(4, 5, 0, 0, 1, 0, false, 0, null)] // SDE 4 P + 1 Exception + 0 A = Compliant!
     public void EvaluateWeeklyCompliance_CalculatesShortfallAndSeverityCorrectly(
         int actualPresent,
         int requiredDays,
+        int approvedLeaveDays,
+        int approvedWfhDays,
+        int exceptionDays,
+        int absentDays,
         bool expectedViolator,
         int expectedShortfall,
         ViolationSeverity? expectedSeverity)
     {
-        var (isViolator, shortfall, severity) = _sut.EvaluateWeeklyCompliance(actualPresent, requiredDays);
+        var (isViolator, shortfall, severity) = _sut.EvaluateWeeklyCompliance(
+            actualPresent, requiredDays, approvedLeaveDays, approvedWfhDays, exceptionDays, absentDays);
 
         Assert.Equal(expectedViolator, isViolator);
         Assert.Equal(expectedShortfall, shortfall);
