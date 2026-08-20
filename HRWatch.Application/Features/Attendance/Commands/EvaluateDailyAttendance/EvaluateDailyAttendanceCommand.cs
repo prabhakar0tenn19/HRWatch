@@ -43,8 +43,8 @@ public class EvaluateDailyAttendanceCommandHandler : ICommandHandler<EvaluateDai
 
     public async Task<Result<EvaluateDailyAttendanceResult>> HandleAsync(EvaluateDailyAttendanceCommand command, CancellationToken cancellationToken = default)
     {
-        var targetDate = command.TargetDate ?? DateOnly.FromDateTime(DateTime.Today);
-        _logger.LogInformation("Starting Daily Attendance Evaluation for Date: {Date} triggered by {TriggeredBy}",
+        var targetDate = command.TargetDate ?? HRWatch.Domain.Common.IndiaDateTime.Today;
+        _logger.LogInformation("Starting Daily Attendance Evaluation for Date: {Date} (IST) triggered by {TriggeredBy}",
             targetDate, command.TriggeredBy);
 
         // 1. Get Active Policy

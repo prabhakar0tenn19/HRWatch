@@ -128,15 +128,17 @@ using (var scope = app.Services.CreateScope())
 // 8. Coravel Fluent Scheduler Setup
 app.Services.UseScheduler(scheduler =>
 {
-    // Daily 11:30 PM: Daily Evaluation Job
+    var istZone = HRWatch.Domain.Common.IndiaDateTime.TimeZone;
+
+    // Daily 11:30 PM IST: Daily Evaluation Job
     scheduler.Schedule<DailyAttendanceEvaluationJob>()
         .DailyAt(23, 30)
-        .Zoned(TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+        .Zoned(istZone);
 
-    // Daily 12:00 AM: Employee Master Sync Job
+    // Daily 12:00 AM IST: Employee Master Sync Job
     scheduler.Schedule<DailyEmployeeSyncJob>()
         .DailyAt(0, 0)
-        .Zoned(TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+        .Zoned(istZone);
 });
 
 // 9. HTTP Pipeline
