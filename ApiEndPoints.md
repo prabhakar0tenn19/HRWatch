@@ -340,6 +340,25 @@ GET /api/employees?searchTerm=Prabhakar
   - `employeeId` (Optional `guid`): Specific employee filter.
   - `activeOnly` (Optional `bool`, default `true`): `true` = currently active only, `false` = full history with revoked exceptions.
 
+#### Sample Response (`200 OK`):
+```json
+[
+  {
+    "id": "8f5a2b1c-99ea-4d1e-bf11-456789abcdef",
+    "employeeId": "c633d608-79ee-44c5-ac0b-4381a2493a05",
+    "employeeCode": "INT259",
+    "fullName": "Prabhakar Lal",
+    "email": "prabhakar.lal@cginfinity.com",
+    "fromDate": "2026-08-19",
+    "toDate": "2026-08-19",
+    "reason": "Client Office Visit / On-duty",
+    "createdBy": "HR Admin",
+    "isActive": true,
+    "createdAt": "2026-08-21T09:00:00Z"
+  }
+]
+```
+
 ---
 
 ## 5. Policies & Version History
