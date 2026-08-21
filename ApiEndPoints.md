@@ -1,46 +1,74 @@
-# HRWatch 2.0 — Complete API Endpoints Documentation
+# HRWatch 2.0 — Enterprise API Specification & Reference
 
-Yeh document HRWatch system ke saare backend endpoints, unke parameters, optional fallbacks, exact response formats, aur real-world business logic ka comprehensive guide hai.
+This document serves as the authoritative, production-grade technical specification for all backend REST API endpoints in the **HRWatch 2.0 Attendance & Compliance Intelligence System**.
 
 ---
 
-## Base Configuration
-- **Base URL:** `http://localhost:5101` (HTTP) / `https://localhost:7119` (HTTPS)
+## 1. System Architecture & Base Configuration
+
+- **Base URL (Local/Dev):** `http://localhost:5101` (HTTP) / `https://localhost:7119` (HTTPS)
 - **Content-Type:** `application/json`
-- **Swagger Documentation:** `http://localhost:5101/swagger/index.html`
+- **Timezone Standard:** Indian Standard Time (IST, UTC+5:30)
+- **Interactive Swagger Documentation:** `http://localhost:5101/swagger/index.html`
+
+### 1.1 Universal Attendance Status Codes
+| Code | Status Name | Badge Styling | Description & Evaluation Outcome |
+|:---:|---|---|---|
+| **`P`** | Present | Green (`#10B981`) | Physical biometric IN-punch recorded via Matrix COSEC device. Counts towards physical office quota. |
+| **`H`** | Holiday | Teal (`#0D9488`) | Official company/public holiday from CG1 calendar. Counts as non-working day; causes **0 shortfall**. |
+| **`L`** | Leave | Amber (`#F59E0B`) | Authorized full-day leave approved in CG1 portal. Causes **0 shortfall**. |
+| **`W`** | WFH | Blue (`#3B82F6`) | Authorized work-from-home approved in CG1 portal. Causes **0 shortfall**. |
+| **`E`** | Exception | Purple (`#8B5CF6`) | Authorized HR override/exception logged in HRWatch. Causes **0 shortfall**. |
+| **`A`** | Absent | Red (`#EF4444`) | Unauthorized absence (no punch, no leave, no exception). **Creates shortfall if WFO quota is unmet.** |
+| **`WO`**| Weekend Off | Slate (`#64748B`) | Saturday / Sunday non-working day. |
 
 ---
 
-## 📑 Quick Navigation (By Page / Feature)
-1. [Page 1: Weekly Violators Dashboard](#1-weekly-violators-dashboard)
-2. [Page 2: Attendance Calendar](#2-attendance-calendar)
-3. [Page 3: Employee Records & Details Drawer](#3-employee-records--details-drawer)
-4. [Page 4: Exceptions Management](#4-exceptions-management)
-5. [Page 5: Policies & Version History](#5-policies--version-history)
-6. [Page 6: Admin Tools & Manual Controls](#6-admin-tools--manual-controls)
-7. [Authentication Endpoints](#7-authentication-endpoints)
+### 1.2 Evaluation Hierarchy & Quota Business Logic
+
+#### A. Daily Priority Hierarchy (First-Match Rule):
+$$\text{COSEC Biometric Punch ('P')} \longrightarrow \text{CG1 Holiday ('H')} \longrightarrow \text{CG1 Leave ('L')} \longrightarrow \text{CG1 WFH ('W')} \longrightarrow \text{HR Exception ('E')} \longrightarrow \text{Absent ('A')}$$
+
+#### B. Weekly Compliance & Violator Formula:
+An employee is evaluated over the standard Monday–Friday operational window (5 working days).
+1. **Compliant (Passed):**
+   - If $\text{actualPresentDays } (P) \ge \text{requiredDays } (R)$ (e.g., a Manager required to come 3 days achieves $P \ge 3$) $\longrightarrow$ **`isViolator = false, shortfallDays = 0`**.
+   - If $\text{absentDays } (A) == 0$ (all non-office days are covered by approved Leave, WFH, Holiday, or Exception) $\longrightarrow$ **`isViolator = false, shortfallDays = 0`**.
+2. **Violator (Failed):**
+   - Triggered when $\text{actualPresentDays } (P) < \text{requiredDays } (R)$ **AND** unauthorized absence exists ($\text{absentDays } (A) > 0$).
+   - **Shortfall Formula:**
+     $$\text{Shortfall} = \min(\text{requiredDays} - \text{actualPresentDays}, \text{absentDays})$$
+   - **Severity Tiers:**
+     - $\text{Shortfall} = 1 \longrightarrow \text{Low}$
+     - $\text{Shortfall} = 2 \longrightarrow \text{Medium}$
+     - $\text{Shortfall} \ge 3 \longrightarrow \text{High}$
 
 ---
 
-## 1. Weekly Violators Dashboard
+## 2. API Endpoints by Feature Module
 
-### 1.1 Past Weeks Summary (Dashboard Cards + Top 5 Widget)
-- **Endpoint:** `GET /api/violations/summary-past-weeks`
-- **Description:** Dashboard load hote hi single API call mein pichle N weeks (default 4 weeks) ka aggregated data deta hai. Left side par week-by-week cards (Total Violators, Critical Violators) aur right side par **Top 5 Shortfall Employees** widget render karta hai.
+---
 
-#### Parameters:
-| Param | Type | In | Required? | Default | Description / Fallback if omitted |
-|---|---|---|---|---|---|
-| `weeksCount` | `int` | Query | Optional | `4` | Kitne weeks ka summary chahiye (Min: 1, Max: 12). Default 4 weeks leta hai. |
-| `designation` | `string` | Query | Optional | `null` | Specific designation filter (e.g. `SDE`, `Manager`). Omit karne par all roles. |
-| `searchTerm` | `string` | Query | Optional | `null` | Name, Email ya EmployeeCode search. Omit karne par saare employees. |
+### 2.1 Feature 1: Weekly Violators Dashboard
 
-#### Sample Request:
+#### 2.1.1 Past Weeks Summary (Aggregated Dashboard & Top 5 Widget)
+- **Route:** `GET /api/violations/summary-past-weeks`
+- **Purpose:** Supplies complete multi-week historical compliance data in a single network request. Populates the past weeks accordion cards on the left and the **Top 5 Shortfall Employees** leaderboard widget on the right.
+
+##### Query Parameters:
+| Parameter | Type | Required | Default | Description & Fallback |
+|---|---|:---:|---|---|
+| `weeksCount` | `integer` | No | `4` | Number of historical weeks to analyze (Min: 1, Max: 12). |
+| `designation` | `string` | No | `null` | Filters records by designation (e.g., `SDE`, `Manager`). If omitted, returns all roles. |
+| `searchTerm` | `string` | No | `null` | Filters by employee full name, email address, or employee code. |
+
+##### Sample Request:
 ```http
-GET /api/violations/summary-past-weeks?weeksCount=4
+GET /api/violations/summary-past-weeks?weeksCount=4 HTTP/1.1
+Host: localhost:5101
 ```
 
-#### Sample Response (`200 OK`):
+##### Sample Response (`200 OK`):
 ```json
 {
   "totalWeeksEvaluated": 4,
@@ -49,8 +77,8 @@ GET /api/violations/summary-past-weeks?weeksCount=4
       "weekStartDate": "2026-08-17",
       "weekEndDate": "2026-08-21",
       "weekLabel": "17 Aug - 21 Aug",
-      "totalViolators": 12,
-      "criticalViolators": 3,
+      "totalViolators": 18,
+      "criticalViolators": 4,
       "violators": [
         {
           "employeeId": "6abf411b-8435-4ac6-af71-90ec04c034c2",
@@ -80,7 +108,7 @@ GET /api/violations/summary-past-weeks?weeksCount=4
       "email": "pratham.madan@cginfinity.com",
       "designation": "SDE",
       "isDeployed": false,
-      "totalShortfallDays": 4,
+      "totalShortfallDays": 5,
       "weeksWithViolations": 2
     }
   ]
@@ -89,23 +117,18 @@ GET /api/violations/summary-past-weeks?weeksCount=4
 
 ---
 
-### 1.2 Single Week Violators List
-- **Endpoint:** `GET /api/violations/weekly`
-- **Description:** Kisi single week ke violators fetch karta hai. Agar koi bhi day of week pass kiya jaye (e.g. Wednesday `2026-08-12`), backend **automatically Monday to Friday 5 working days normalize** kar leta hai.
+#### 2.1.2 Single Week Violators List
+- **Route:** `GET /api/violations/weekly`
+- **Purpose:** Fetches the granular list of non-compliant employees for a specific Monday–Friday operational cycle.
 
-#### Parameters:
-| Param | Type | In | Required? | Default | Description / Fallback if omitted |
-|---|---|---|---|---|---|
-| `weekStartDate` | `date` | Query | Optional | Current Week Monday | Agar omit kiya, toh **Current Week (IST Monday)** automatic calculate hota hai. |
-| `designation` | `string` | Query | Optional | `null` | Role filter (e.g. `SDE`, `Associate 1`). |
-| `searchTerm` | `string` | Query | Optional | `null` | Name, Email, ya EmployeeCode search term. |
+##### Query Parameters:
+| Parameter | Type | Required | Default | Description & Fallback |
+|---|---|:---:|---|---|
+| `weekStartDate` | `date` | No | Current Week Monday | Target week date. Automatically normalizes any arbitrary weekday to its preceding Monday. |
+| `designation` | `string` | No | `null` | Substring filter on job title/designation. |
+| `searchTerm` | `string` | No | `null` | Substring filter on Name, Code, or Email. |
 
-#### Sample Request:
-```http
-GET /api/violations/weekly?weekStartDate=2026-08-17&searchTerm=pratham
-```
-
-#### Sample Response (`200 OK`):
+##### Sample Response (`200 OK`):
 ```json
 [
   {
@@ -118,42 +141,43 @@ GET /api/violations/weekly?weekStartDate=2026-08-17&searchTerm=pratham
     "weekStartDate": "2026-08-17",
     "weekEndDate": "2026-08-21",
     "requiredDays": 5,
-    "actualPresentDays": 4,
+    "actualPresentDays": 2,
     "leaveDays": 0,
     "wfhDays": 0,
-    "absentDays": 1,
-    "shortfallDays": 1,
-    "severity": "Low"
+    "absentDays": 3,
+    "shortfallDays": 3,
+    "severity": "High"
   }
 ]
 ```
 
 ---
 
-## 2. Attendance Calendar
+### 2.2 Feature 2: Attendance Calendar
 
-### 2.1 Calendar View With In-Punch Times & Exceptions
-- **Endpoint:** `GET /api/attendance/calendar`
-- **Description:** Monthly ya custom date range mein har din ka attendance status code (`P`, `L`, `W`, `E`, `A`, `WO`, `H`, `-`), pehla biometric punch time (`09:15 AM`), aur employee ki active exceptions single payload mein return karta hai.
+#### 2.2.1 Employee Attendance Calendar Feed
+- **Route:** `GET /api/attendance/calendar`
+- **Purpose:** Returns day-by-day status codes, punch timestamps, and active exceptions across any requested date range for calendar views.
 
-#### Parameters:
-| Param | Type | In | Required? | Default | Description / Fallback if omitted |
-|---|---|---|---|---|---|
-| `startDate` | `date` | Query | **Required** | - | Range start date (e.g. `2026-08-01`). |
-| `endDate` | `date` | Query | **Required** | - | Range end date (e.g. `2026-08-31`). |
-| `searchTerm` | `string` | Query | Optional | `null` | Specific employee code/name/email filter. |
-| `designation` | `string` | Query | Optional | `null` | Role filter. |
+##### Query Parameters:
+| Parameter | Type | Required | Default | Description & Fallback |
+|---|---|:---:|---|---|
+| `startDate` | `date` | **Yes** | — | Start date of query range (`YYYY-MM-DD`). |
+| `endDate` | `date` | **Yes** | — | End date of query range (`YYYY-MM-DD`). |
+| `searchTerm` | `string` | No | `null` | Filter by employee name, code, or email. |
+| `designation` | `string` | No | `null` | Filter by employee designation. |
 
-#### Sample Request:
+##### Sample Request:
 ```http
-GET /api/attendance/calendar?startDate=2026-08-17&endDate=2026-08-20&searchTerm=INT259
+GET /api/attendance/calendar?startDate=2026-08-17&endDate=2026-08-23&searchTerm=prabhakar HTTP/1.1
+Host: localhost:5101
 ```
 
-#### Sample Response (`200 OK`):
+##### Sample Response (`200 OK`):
 ```json
 [
   {
-    "employeeId": "c633d608-79ee-44c5-ac0b-4381a2493a05",
+    "employeeId": "e229e34e-0a06-4078-a3f1-739bece1f422",
     "employeeCode": "INT259",
     "fullName": "Prabhakar Lal",
     "email": "prabhakar.lal@cginfinity.com",
@@ -165,20 +189,20 @@ GET /api/attendance/calendar?startDate=2026-08-17&endDate=2026-08-20&searchTerm=
         "dayOfWeek": "Monday",
         "statusCode": "P",
         "leaveType": null,
-        "punchTime": "09:18 AM"
+        "punchTime": "09:42 AM"
       },
       {
         "date": "2026-08-18",
         "dayOfWeek": "Tuesday",
         "statusCode": "P",
         "leaveType": null,
-        "punchTime": "09:15 AM"
+        "punchTime": "09:50 AM"
       },
       {
         "date": "2026-08-19",
         "dayOfWeek": "Wednesday",
-        "statusCode": "A",
-        "leaveType": null,
+        "statusCode": "H",
+        "leaveType": "Holiday",
         "punchTime": null
       },
       {
@@ -186,7 +210,28 @@ GET /api/attendance/calendar?startDate=2026-08-17&endDate=2026-08-20&searchTerm=
         "dayOfWeek": "Thursday",
         "statusCode": "P",
         "leaveType": null,
-        "punchTime": "09:15 AM"
+        "punchTime": "09:35 AM"
+      },
+      {
+        "date": "2026-08-21",
+        "dayOfWeek": "Friday",
+        "statusCode": "P",
+        "leaveType": null,
+        "punchTime": "09:40 AM"
+      },
+      {
+        "date": "2026-08-22",
+        "dayOfWeek": "Saturday",
+        "statusCode": "WO",
+        "leaveType": null,
+        "punchTime": null
+      },
+      {
+        "date": "2026-08-23",
+        "dayOfWeek": "Sunday",
+        "statusCode": "WO",
+        "leaveType": null,
+        "punchTime": null
       }
     ],
     "activeExceptions": []
@@ -196,92 +241,80 @@ GET /api/attendance/calendar?startDate=2026-08-17&endDate=2026-08-20&searchTerm=
 
 ---
 
-## 3. Employee Records & Details Drawer
+### 2.3 Feature 3: Employee Records & Details Drawer
 
-### 3.1 Get All Active Employees (Main Table View)
-- **Endpoint:** `GET /api/employees`
-- **Description:** Database ke sabhi employees fetch karta hai with aggregated health metrics (`PresentDays`, `AbsentDays`, `LeaveDays`, `WfhDays`, `AbsentPercentage`).
+#### 2.3.1 Get All Employees (With Aggregated Metrics)
+- **Route:** `GET /api/employees`
+- **Purpose:** Powers the master employee directory with pre-calculated attendance totals, absence percentages, and deployment status.
 
-#### Parameters:
-| Param | Type | In | Required? | Default | Description / Fallback if omitted |
-|---|---|---|---|---|---|
-| `searchTerm` | `string` | Query | Optional | `null` | Search across FullName, Email, aur EmployeeCode. |
-| `designation` | `string` | Query | Optional | `null` | Filter by designation. |
-| `isDeployed` | `bool` | Query | Optional | `null` | `true` = Deployed, `false` = Bench, `null` = All. |
-| `onlyActive` | `bool` | Query | Optional | `true` | Sirf active employees (default `true`). |
+##### Query Parameters:
+| Parameter | Type | Required | Default | Description & Fallback |
+|---|---|:---:|---|---|
+| `searchTerm` | `string` | No | `null` | Substring search on Name, Code, or Email. |
+| `designation` | `string` | No | `null` | Designation filter. |
+| `isDeployed` | `boolean` | No | `null` | `true` = Client Deployed, `false` = Bench / Internal HQ. If omitted, returns all. |
+| `onlyActive` | `boolean` | No | `true` | `true` = Active employees only, `false` = Includes deactivated employees. |
 
-#### Sample Request:
-```http
-GET /api/employees?searchTerm=Prabhakar
-```
-
-#### Sample Response (`200 OK`):
+##### Sample Response (`200 OK`):
 ```json
 [
   {
-    "id": "c633d608-79ee-44c5-ac0b-4381a2493a05",
+    "id": "e229e34e-0a06-4078-a3f1-739bece1f422",
     "employeeCode": "INT259",
     "fullName": "Prabhakar Lal",
     "email": "prabhakar.lal@cginfinity.com",
     "designation": "SDE",
     "isDeployed": false,
     "isActive": true,
-    "location": "India",
-    "presentDays": 3,
-    "absentDays": 1,
-    "leaveDays": 0,
+    "location": "Noida / India",
+    "presentDays": 18,
+    "absentDays": 2,
+    "leaveDays": 1,
     "wfhDays": 0,
     "exceptionDays": 0,
-    "absentPercentage": 25.0,
-    "createdAt": "2026-08-18T18:18:23.456Z"
+    "absentPercentage": 9.5,
+    "createdAt": "2026-08-01T00:00:00Z"
   }
 ]
 ```
 
 ---
 
-### 3.2 Get Employee By ID (Details Drawer)
-- **Endpoint:** `GET /api/employees/{id}`
-- **Description:** Kisi employee par click karne par khulne wale Right Drawer ke liye profile info, health metrics, aur last 10 days ka recent attendance history feed (with punch times) return karta hai.
+#### 2.3.2 Get Employee Detail by ID (Sliding Drawer Feed)
+- **Route:** `GET /api/employees/{id}`
+- **Purpose:** Supplies comprehensive profile metadata, compliance statistics, and the recent 10-day attendance feed with physical in-punch timestamps for the profile sliding drawer.
 
-#### Parameters:
-| Param | Type | In | Required? | Description |
-|---|---|---|---|---|
-| `id` | `guid` | Path | **Required** | Employee GUID Id. |
+##### Route Parameters:
+| Parameter | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | `Guid` | **Yes** | Unique Employee Identifier. |
 
-#### Sample Response (`200 OK`):
+##### Sample Response (`200 OK`):
 ```json
 {
-  "id": "c633d608-79ee-44c5-ac0b-4381a2493a05",
+  "id": "e229e34e-0a06-4078-a3f1-739bece1f422",
   "employeeCode": "INT259",
   "fullName": "Prabhakar Lal",
   "email": "prabhakar.lal@cginfinity.com",
   "designation": "SDE",
   "isDeployed": false,
   "isActive": true,
-  "location": "India",
-  "createdAt": "2026-08-18T18:18:23.456Z",
-  "presentDays": 3,
-  "absentDays": 1,
-  "leaveDays": 0,
+  "location": "Noida / India",
+  "createdAt": "2026-08-01T00:00:00Z",
+  "presentDays": 18,
+  "absentDays": 2,
+  "leaveDays": 1,
   "wfhDays": 0,
   "exceptionDays": 0,
-  "absentPercentage": 25.0,
+  "absentPercentage": 9.5,
   "totalExceptionsCount": 0,
   "recentAttendances": [
     {
-      "date": "2026-08-20",
-      "dayOfWeek": "Thursday",
+      "date": "2026-08-21",
+      "dayOfWeek": "Friday",
       "status": "P",
       "leaveType": null,
-      "firstPunchTime": "09:15 AM"
-    },
-    {
-      "date": "2026-08-19",
-      "dayOfWeek": "Wednesday",
-      "status": "A",
-      "leaveType": null,
-      "firstPunchTime": null
+      "firstPunchTime": "09:40:12 AM"
     }
   ]
 }
@@ -289,43 +322,69 @@ GET /api/employees?searchTerm=Prabhakar
 
 ---
 
-## 4. Exceptions Management
+### 2.4 Feature 4: Exceptions Management
 
-### 4.1 Create Exception
-- **Endpoint:** `POST /api/exceptions`
-- **Description:** Employee ke liye approved exception create karta hai. Us date range ke purane `Status = 'A'` (Absent) records **instantaneously `Status = 'E'` (Exception) mein reconcile ho jate hain**.
+#### 2.4.1 Get Exceptions List
+- **Route:** `GET /api/exceptions`
+- **Purpose:** Fetches active and historical HR exceptions with employee profile details.
 
-#### Request Body (`application/json`):
+##### Query Parameters:
+| Parameter | Type | Required | Default | Description & Fallback |
+|---|---|:---:|---|---|
+| `employeeId` | `Guid` | No | `null` | Filter exceptions for a specific employee. |
+| `activeOnly` | `boolean` | No | `true` | `true` = Active exceptions only, `false` = Full audit history. |
+
+##### Sample Response (`200 OK`):
+```json
+[
+  {
+    "id": "8f3b207e-52db-43da-8e12-32cb90a42f61",
+    "employeeId": "e229e34e-0a06-4078-a3f1-739bece1f422",
+    "employeeCode": "INT259",
+    "fullName": "Prabhakar Lal",
+    "email": "prabhakar.lal@cginfinity.com",
+    "fromDate": "2026-08-25",
+    "toDate": "2026-08-27",
+    "reason": "Client On-site visit at Dallas headquarters",
+    "createdBy": "HR Admin",
+    "isActive": true,
+    "createdAt": "2026-08-21T10:15:00Z"
+  }
+]
+```
+
+---
+
+#### 2.4.2 Create Exception
+- **Route:** `POST /api/exceptions`
+- **Purpose:** Creates a date-range exception. Automatically validates against overlapping exceptions and triggers background re-evaluation of affected attendance records.
+
+##### Request Body:
 ```json
 {
-  "employeeId": "c633d608-79ee-44c5-ac0b-4381a2493a05",
-  "fromDate": "2026-08-19",
-  "toDate": "2026-08-19",
-  "reason": "Client Office Visit / On-duty",
+  "employeeId": "e229e34e-0a06-4078-a3f1-739bece1f422",
+  "fromDate": "2026-08-25",
+  "toDate": "2026-08-27",
+  "reason": "Client On-site visit at Dallas headquarters",
   "createdBy": "HR Admin"
 }
 ```
 
-#### Sample Response (`200 OK`):
+##### Response (`201 Created`):
 ```json
 {
-  "exceptionId": "8f5a2b1c-99ea-4d1e-bf11-456789abcdef",
+  "exceptionId": "8f3b207e-52db-43da-8e12-32cb90a42f61",
   "message": "Exception created successfully."
 }
 ```
 
-#### Validation Error Responses:
-- **`400 Bad Request` (`OVERLAPPING_EXCEPTION`):** Agar already us date range mein active exception exist karti hai.
-- **`400 Bad Request` (`INVALID_DATE_RANGE`):** Agar `fromDate > toDate`.
-- **`404 Not Found` (`NOT_FOUND`):** Agar `employeeId` exist nahi karta.
-
 ---
 
-### 4.2 Revoke Exception (Soft Delete)
-- **Endpoint:** `DELETE /api/exceptions/{id}`
-- **Description:** Active exception ko revoke karta hai (`IsActive = false`). Us date range ke `'E'` records wapas `'A'` (Absent) ban jaate hain.
+#### 2.4.3 Revoke Exception
+- **Route:** `DELETE /api/exceptions/{id}`
+- **Purpose:** Soft-deletes/revokes an active exception and re-evaluates attendance for the affected dates.
 
-#### Sample Response (`200 OK`):
+##### Response (`200 OK`):
 ```json
 {
   "message": "Exception revoked successfully."
@@ -334,150 +393,210 @@ GET /api/employees?searchTerm=Prabhakar
 
 ---
 
-### 4.3 Get Exceptions List / Audit History
-- **Endpoint:** `GET /api/exceptions`
-- **Parameters:**
-  - `employeeId` (Optional `guid`): Specific employee filter.
-  - `activeOnly` (Optional `bool`, default `true`): `true` = currently active only, `false` = full history with revoked exceptions.
+### 2.5 Feature 5: Policies & Version History
 
-#### Sample Response (`200 OK`):
+#### 2.5.1 Get Active Policy
+- **Route:** `GET /api/policies/active`
+- **Purpose:** Fetches the currently enforced organizational attendance policy and rule configurations.
+
+##### Sample Response (`200 OK`):
+```json
+{
+  "id": "1c7d2426-302a-436f-b258-450f757270e5",
+  "version": 3,
+  "policyName": "Standard WFO Policy 2026",
+  "rulesJson": "[{\"category\":\"SDE\",\"normalWfoDays\":5,\"onBenchDays\":5},{\"category\":\"Manager\",\"normalWfoDays\":3,\"onBenchDays\":5}]",
+  "effectiveFrom": "2026-08-01T00:00:00Z",
+  "effectiveTo": null,
+  "isActive": true,
+  "createdBy": "System Admin",
+  "createdAt": "2026-08-01T00:00:00Z"
+}
+```
+
+---
+
+#### 2.5.2 Get Policy Version History
+- **Route:** `GET /api/policies/history`
+- **Purpose:** Returns the complete version history of all active and archived organizational policies.
+
+##### Sample Response (`200 OK`):
 ```json
 [
   {
-    "id": "8f5a2b1c-99ea-4d1e-bf11-456789abcdef",
-    "employeeId": "c633d608-79ee-44c5-ac0b-4381a2493a05",
-    "employeeCode": "INT259",
-    "fullName": "Prabhakar Lal",
-    "email": "prabhakar.lal@cginfinity.com",
-    "fromDate": "2026-08-19",
-    "toDate": "2026-08-19",
-    "reason": "Client Office Visit / On-duty",
-    "createdBy": "HR Admin",
+    "id": "1c7d2426-302a-436f-b258-450f757270e5",
+    "version": 3,
+    "policyName": "Standard WFO Policy 2026",
+    "rulesJson": "[...]",
+    "effectiveFrom": "2026-08-01T00:00:00Z",
+    "effectiveTo": null,
     "isActive": true,
-    "createdAt": "2026-08-21T09:00:00Z"
+    "createdBy": "System Admin",
+    "createdAt": "2026-08-01T00:00:00Z"
+  },
+  {
+    "id": "0b6e1315-201a-325e-a147-340e646160d4",
+    "version": 2,
+    "policyName": "Legacy Hybrid WFO Policy",
+    "rulesJson": "[...]",
+    "effectiveFrom": "2026-01-01T00:00:00Z",
+    "effectiveTo": "2026-07-31T23:59:59Z",
+    "isActive": false,
+    "createdBy": "System Admin",
+    "createdAt": "2026-01-01T00:00:00Z"
   }
 ]
 ```
 
 ---
 
-## 5. Policies & Version History
+#### 2.5.3 Create New Policy Version
+- **Route:** `POST /api/policies/new-version`
+- **Purpose:** Publishes a new policy version, automatically sets its `isActive = true`, and archives the previous active version.
 
-### 5.1 Get Active Policy
-- **Endpoint:** `GET /api/policies/active`
-- **Description:** Currently active WFO attendance rule return karta hai.
-
-#### Sample Response (`200 OK`):
+##### Request Body:
 ```json
 {
-  "id": "2195f190-77a8-48b7-b089-8d1421a221f7",
-  "version": 1,
-  "policyName": "Default CG India WFO Policy",
-  "rulesJson": "{\"MinWfoDaysPerWeek\":{\"SDE\":5,\"Consultant\":5,\"Intern\":5,\"Associate\":3,\"Manager\":3,\"Principal\":3,\"Bench\":5},\"DefaultRequiredDays\":5}",
-  "effectiveFrom": "2025-08-18",
-  "effectiveTo": null,
-  "isActive": true,
-  "createdBy": "System",
-  "createdAt": "2026-08-18T18:18:23.456Z"
+  "policyName": "Updated Q4 WFO Policy",
+  "rulesJson": "[{\"category\":\"SDE\",\"normalWfoDays\":5,\"onBenchDays\":5},{\"category\":\"Manager\",\"normalWfoDays\":3,\"onBenchDays\":5}]",
+  "effectiveFrom": "2026-09-01T00:00:00Z",
+  "createdBy": "HR Admin"
+}
+```
+
+##### Response (`201 Created`):
+```json
+{
+  "policyId": "3e9f4567-e89b-12d3-a456-426614174000",
+  "message": "Policy version 4 created and activated successfully."
 }
 ```
 
 ---
 
-### 5.2 Get Policy Version History
-- **Endpoint:** `GET /api/policies/history`
-- **Description:** Saari historical aur active policy versions sorted order (`Version DESC`) mein deta hai.
+### 2.6 Feature 6: Admin Tools & Manual Sync Controls
 
----
+#### 2.6.1 Live Employee Synchronization
+- **Route:** `POST /api/attendance/sync-employees`
+- **Purpose:** Connects to the deployed CG1 Azure API (`https://cg-one-ntier-dev.azurewebsites.net/api/v2/EmployeeWeeklyOverview`) using server-side secure headers, synchronizes the master employee roster, and reconciles active/inactive statuses.
 
-### 5.3 Create New Policy Version
-- **Endpoint:** `POST /api/policies/new-version`
-- **Description:** Purani active version ko archive (`IsActive = false`) karta hai aur new version activate karta hai.
-
-#### Request Body (`application/json`):
+##### Sample Response (`200 OK`):
 ```json
 {
-  "policyName": "Updated Q3 WFO Policy",
-  "rulesJson": "{\"MinWfoDaysPerWeek\":{\"SDE\":5,\"Consultant\":5,\"Associate\":3,\"Manager\":3},\"DefaultRequiredDays\":5}",
-  "effectiveFrom": "2026-09-01",
-  "createdBy": "HR Manager"
+  "totalFetched": 265,
+  "employeesCreated": 17,
+  "employeesUpdated": 248,
+  "employeesDeactivated": 120,
+  "syncedAt": "2026-08-21T10:20:00Z"
 }
 ```
 
 ---
 
-## 6. Admin Tools & Manual Controls
+#### 2.6.2 Evaluate Daily Attendance
+- **Route:** `POST /api/attendance/evaluate-daily`
+- **Purpose:** Executes the full reconciliation engine for a given target date. Cross-references Matrix COSEC in-punches, CG1 Leaves/WFH/Holidays, and active HR Exceptions.
 
-### 6.1 Manual Sync Employees from CG1
-- **Endpoint:** `POST /api/attendance/sync-employees`
-- **Description:** CG1 Master API se live active India (`Offshore`) employees sync karta hai. Missing employees ko **Auto-Deactivate** karta hai.
+##### Query Parameters:
+| Parameter | Type | Required | Default | Description & Fallback |
+|---|---|:---:|---|---|
+| `targetDate` | `date` | No | Current Date (IST) | Target date to evaluate (`YYYY-MM-DD`). |
 
-#### Sample Response (`200 OK`):
-```json
-{
-  "totalFetched": 174,
-  "employeesCreated": 0,
-  "employeesUpdated": 174,
-  "employeesDeactivated": 0,
-  "syncedAt": "2026-08-21T09:20:00Z"
-}
-```
-
----
-
-### 6.2 Manual Evaluate Daily Attendance
-- **Endpoint:** `POST /api/attendance/evaluate-daily`
-- **Parameters:**
-  - `targetDate` (Optional `date`): Evaluate karne ki date. Omit karne par **`IndiaDateTime.Today`** (IST date) evaluate hoti hai.
-
-#### Sample Request:
+##### Sample Request:
 ```http
-POST /api/attendance/evaluate-daily?targetDate=2026-08-20
+POST /api/attendance/evaluate-daily?targetDate=2026-08-20 HTTP/1.1
+Host: localhost:5101
 ```
 
-#### Sample Response (`200 OK`):
+##### Sample Response (`200 OK`):
 ```json
 {
   "evaluationDate": "2026-08-20",
-  "totalActiveEmployees": 174,
-  "presentCount": 140,
-  "leaveCount": 5,
-  "wfhCount": 10,
+  "totalActiveEmployees": 265,
+  "presentCount": 138,
+  "leaveCount": 14,
+  "wfhCount": 22,
   "exceptionCount": 2,
-  "absentCount": 17,
+  "absentCount": 89,
   "weekendOrHolidayCount": 0,
-  "evaluatedAt": "2026-08-21T09:20:00Z"
+  "evaluatedAt": "2026-08-21T10:25:00Z"
 }
 ```
 
 ---
 
-### 6.3 Manual Evaluate Range (Or Re-evaluate Week)
-- **Endpoint:** `POST /api/attendance/evaluate-range`
-- **Parameters:**
-  - `startDate` (**Required** `date`): e.g. `2026-08-17`
-  - `endDate` (**Required** `date`): e.g. `2026-08-21`
+#### 2.6.3 Evaluate Date Range
+- **Route:** `POST /api/attendance/evaluate-range`
+- **Purpose:** Iteratively executes batch evaluation across multiple sequential calendar days.
 
-#### Sample Response (`200 OK`):
+##### Query Parameters:
+| Parameter | Type | Required | Description |
+|---|---|:---:|---|
+| `startDate` | `date` | **Yes** | Range start date (`YYYY-MM-DD`). |
+| `endDate` | `date` | **Yes** | Range end date (`YYYY-MM-DD`). |
+
+##### Sample Response (`200 OK`):
 ```json
 {
   "startDate": "2026-08-17",
   "endDate": "2026-08-21",
   "totalDaysEvaluated": 5,
-  "dailyResults": [ ... ],
-  "completedAt": "2026-08-21T09:25:00Z"
+  "dailyResults": [
+    {
+      "evaluationDate": "2026-08-17",
+      "totalActiveEmployees": 265,
+      "presentCount": 142,
+      "leaveCount": 10,
+      "wfhCount": 18,
+      "exceptionCount": 1,
+      "absentCount": 94,
+      "weekendOrHolidayCount": 0,
+      "evaluatedAt": "2026-08-21T10:30:00Z"
+    }
+  ],
+  "completedAt": "2026-08-21T10:30:05Z"
 }
 ```
 
 ---
 
-## 7. Authentication Endpoints
+### 2.7 Feature 7: Authentication & Access Control
 
-### 7.1 Login
-- **Endpoint:** `POST /api/auth/login`
-- **Body:** `{"usernameOrEmail": "admin", "password": "Password123!"}`
-- **Response:** `{"token": "JWT_TOKEN_STRING", "username": "admin", "email": "admin@cginfinity.com", "role": "Admin"}`
+#### 2.7.1 User Login
+- **Route:** `POST /api/auth/login`
+- **Request Body:**
+```json
+{
+  "email": "admin@cginfinity.com",
+  "password": "Password@123"
+}
+```
+- **Response (`200 OK`):**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiration": "2026-08-22T10:00:00Z",
+  "email": "admin@cginfinity.com",
+  "fullName": "System Administrator",
+  "role": "Admin"
+}
+```
 
-### 7.2 Register
-- **Endpoint:** `POST /api/auth/register`
-- **Body:** `{"username": "hr_manager", "email": "hr@cginfinity.com", "password": "Password123!", "role": "HR"}`
+#### 2.7.2 User Registration
+- **Route:** `POST /api/auth/register`
+- **Request Body:**
+```json
+{
+  "email": "user@cginfinity.com",
+  "password": "Password@123",
+  "fullName": "John Doe",
+  "role": "User"
+}
+```
+- **Response (`200 OK`):**
+```json
+{
+  "userId": "5a4b3c2d-1e0f-9a8b-7c6d-5e4f3a2b1c0d",
+  "message": "User registered successfully."
+}
+```
