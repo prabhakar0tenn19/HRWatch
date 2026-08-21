@@ -53,8 +53,8 @@ public class DailyEmployeeSyncJob : IInvocable
         var result = await _commandMediator.SendAsync(new SyncEmployeesCommand("CoravelScheduler:Daily"));
         if (result.IsSuccess)
         {
-            _logger.LogInformation("[Coravel Scheduler] Employee Master Sync finished. Total: {Total}, Created: {Created}",
-                result.Value?.TotalFetched, result.Value?.EmployeesCreated);
+            _logger.LogInformation("[Coravel Scheduler] Employee Master Sync finished. Total: {Total}, Created: {Created}, Updated: {Updated}, Deactivated: {Deactivated}",
+                result.Value?.TotalFetched, result.Value?.EmployeesCreated, result.Value?.EmployeesUpdated, result.Value?.EmployeesDeactivated);
         }
         else
         {
