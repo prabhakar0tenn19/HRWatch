@@ -39,7 +39,7 @@ public class GetEmployeeByIdQueryHandler : IQueryHandler<GetEmployeeByIdQuery, R
 
         if (emp == null)
         {
-            return Result<EmployeeDetailDto>.Failure("Employee not found");
+            return Result<EmployeeDetailDto>.Failure("Employee not found.", "NOT_FOUND");
         }
 
         var dto = new EmployeeDetailDto(
