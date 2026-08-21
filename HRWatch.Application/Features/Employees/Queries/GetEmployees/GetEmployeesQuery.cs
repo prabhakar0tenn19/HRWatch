@@ -1,5 +1,6 @@
 using HRWatch.Application.Common;
 using HRWatch.Application.Common.Interfaces;
+using HRWatch.Domain.Enums;
 using LiteBus.Queries.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,12 @@ public record EmployeeDto(
     bool IsDeployed,
     bool IsActive,
     string Location,
+    int PresentDays,
+    int AbsentDays,
+    int LeaveDays,
+    int WfhDays,
+    int ExceptionDays,
+    double AbsentPercentage,
     DateTime CreatedAt);
 
 public record GetEmployeesQuery(
@@ -62,7 +69,8 @@ public class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, Result<
 
         var employees = await dbQuery
             .OrderBy(e => e.FullName)
-            .Select(e => new EmployeeDto(
+            .Select(e => new
+            {
                 e.Id,
                 e.EmployeeCode,
                 e.FullName,
@@ -71,9 +79,40 @@ public class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, Result<
                 e.IsDeployed,
                 e.IsActive,
                 e.Location,
-                e.CreatedAt))
+                e.CreatedAt,
+                PresentDays = e.Attendances.Count(a => a.Status == AttendanceStatus.P),
+                AbsentDays = e.Attendances.Count(a => a.Status == AttendanceStatus.A),
+                LeaveDays = e.Attendances.Count(a => a.Status == AttendanceStatus.L),
+                WfhDays = e.Attendances.Count(a => a.Status == AttendanceStatus.W),
+                ExceptionDays = e.Attendances.Count(a => a.Status == AttendanceStatus.E),
+                TotalWorkingEvaluated = e.Attendances.Count(a => a.Status != AttendanceStatus.WO && a.Status != AttendanceStatus.H)
+            })
             .ToListAsync(cancellationToken);
 
-        return Result<IReadOnlyList<EmployeeDto>>.Success(employees);
+        var result = employees.Select(e =>
+        {
+            double absentPct = e.TotalWorkingEvaluated > 0
+                ? Math.Round((double)e.AbsentDays / e.TotalWorkingEvaluated * 100.0, 1)
+                : 0.0;
+
+            return new EmployeeDto(
+                e.Id,
+                e.EmployeeCode,
+                e.FullName,
+                e.Email,
+                e.Designation,
+                e.IsDeployed,
+                e.IsActive,
+                e.Location,
+                e.PresentDays,
+                e.AbsentDays,
+                e.LeaveDays,
+                e.WfhDays,
+                e.ExceptionDays,
+                absentPct,
+                e.CreatedAt);
+        }).ToList();
+
+        return Result<IReadOnlyList<EmployeeDto>>.Success(result);
     }
 }
