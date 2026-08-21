@@ -31,29 +31,27 @@ public class GetEmployeeByIdQueryHandler : IQueryHandler<GetEmployeeByIdQuery, R
 
     public async Task<Result<EmployeeDetailDto>> HandleAsync(GetEmployeeByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var emp = await _dbContext.Employees
+        var dto = await _dbContext.Employees
             .AsNoTracking()
-            .Include(e => e.Exceptions)
-            .Include(e => e.Attendances)
-            .FirstOrDefaultAsync(e => e.Id == query.Id, cancellationToken);
+            .Where(e => e.Id == query.Id)
+            .Select(e => new EmployeeDetailDto(
+                e.Id,
+                e.EmployeeCode,
+                e.FullName,
+                e.Email,
+                e.Designation,
+                e.IsDeployed,
+                e.IsActive,
+                e.Location,
+                e.CreatedAt,
+                e.Exceptions.Count(),
+                e.Attendances.Count()))
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (emp == null)
+        if (dto == null)
         {
             return Result<EmployeeDetailDto>.Failure("Employee not found.", "NOT_FOUND");
         }
-
-        var dto = new EmployeeDetailDto(
-            emp.Id,
-            emp.EmployeeCode,
-            emp.FullName,
-            emp.Email,
-            emp.Designation,
-            emp.IsDeployed,
-            emp.IsActive,
-            emp.Location,
-            emp.CreatedAt,
-            emp.Exceptions.Count,
-            emp.Attendances.Count);
 
         return Result<EmployeeDetailDto>.Success(dto);
     }
