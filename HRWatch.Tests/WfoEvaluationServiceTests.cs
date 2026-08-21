@@ -37,17 +37,19 @@ public class WfoEvaluationServiceTests
     }
 
     [Theory]
-    [InlineData(5, 5, 0, 0, 0, 0, false, 0, null)]
-    [InlineData(4, 5, 0, 0, 0, 1, true, 1, ViolationSeverity.Low)]
-    [InlineData(3, 5, 0, 0, 0, 2, true, 2, ViolationSeverity.Medium)]
-    [InlineData(2, 5, 0, 0, 0, 3, true, 3, ViolationSeverity.High)]
-    [InlineData(0, 5, 0, 0, 0, 5, true, 5, ViolationSeverity.High)]
-    [InlineData(3, 3, 0, 2, 0, 0, false, 0, null)] // Manager 3 P + 2 WFH + 0 A = Compliant
-    [InlineData(2, 3, 0, 2, 0, 1, true, 1, ViolationSeverity.Low)] // Manager 2 P + 2 WFH + 1 A = Violator (Low)
-    [InlineData(3, 5, 2, 0, 0, 0, false, 0, null)] // SDE 3 P + 2 Approved Leaves + 0 A = Compliant!
-    [InlineData(2, 5, 2, 0, 0, 1, true, 1, ViolationSeverity.Low)] // SDE 2 P + 2 Leaves + 1 A = Violator (1 shortfall)
-    [InlineData(0, 5, 5, 0, 0, 0, false, 0, null)] // SDE full week on approved leave = Compliant!
-    [InlineData(4, 5, 0, 0, 1, 0, false, 0, null)] // SDE 4 P + 1 Exception + 0 A = Compliant!
+    [InlineData(5, 5, 0, 0, 0, 0, 0, false, 0, null)]
+    [InlineData(4, 5, 0, 0, 0, 1, 0, true, 1, ViolationSeverity.Low)]
+    [InlineData(3, 5, 0, 0, 0, 2, 0, true, 2, ViolationSeverity.Medium)]
+    [InlineData(2, 5, 0, 0, 0, 3, 0, true, 3, ViolationSeverity.High)]
+    [InlineData(0, 5, 0, 0, 0, 5, 0, true, 5, ViolationSeverity.High)]
+    [InlineData(3, 3, 0, 2, 0, 0, 0, false, 0, null)] // Manager 3 P + 2 WFH + 0 A = Compliant
+    [InlineData(2, 3, 0, 2, 0, 1, 0, true, 1, ViolationSeverity.Low)] // Manager 2 P + 2 WFH + 1 A = Violator (Low)
+    [InlineData(3, 5, 2, 0, 0, 0, 0, false, 0, null)] // SDE 3 P + 2 Approved Leaves + 0 A = Compliant!
+    [InlineData(2, 5, 2, 0, 0, 1, 0, true, 1, ViolationSeverity.Low)] // SDE 2 P + 2 Leaves + 1 A = Violator (1 shortfall)
+    [InlineData(0, 5, 5, 0, 0, 0, 0, false, 0, null)] // SDE full week on approved leave = Compliant!
+    [InlineData(4, 5, 0, 0, 1, 0, 0, false, 0, null)] // SDE 4 P + 1 Exception + 0 A = Compliant!
+    [InlineData(4, 5, 0, 0, 0, 0, 1, false, 0, null)] // SDE 4 P + 1 Public Holiday + 0 A = Compliant!
+    [InlineData(3, 5, 0, 0, 0, 1, 1, true, 1, ViolationSeverity.Low)] // SDE 3 P + 1 Holiday + 1 A = 1 Shortfall (Low)
     public void EvaluateWeeklyCompliance_CalculatesShortfallAndSeverityCorrectly(
         int actualPresent,
         int requiredDays,
@@ -55,12 +57,13 @@ public class WfoEvaluationServiceTests
         int approvedWfhDays,
         int exceptionDays,
         int absentDays,
+        int holidayDays,
         bool expectedViolator,
         int expectedShortfall,
         ViolationSeverity? expectedSeverity)
     {
         var (isViolator, shortfall, severity) = _sut.EvaluateWeeklyCompliance(
-            actualPresent, requiredDays, approvedLeaveDays, approvedWfhDays, exceptionDays, absentDays);
+            actualPresent, requiredDays, approvedLeaveDays, approvedWfhDays, exceptionDays, absentDays, holidayDays);
 
         Assert.Equal(expectedViolator, isViolator);
         Assert.Equal(expectedShortfall, shortfall);

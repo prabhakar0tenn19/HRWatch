@@ -12,5 +12,6 @@ public interface IWfoEvaluationService
         int approvedLeaveDays = 0, 
         int approvedWfhDays = 0, 
         int exceptionDays = 0, 
-        int absentDays = 0);
+        int absentDays = 0,
+        int holidayDays = 0);
 }

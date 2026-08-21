@@ -168,7 +168,7 @@ public class EvaluateDailyAttendanceCommandHandler : ICommandHandler<EvaluateDai
             }
         }
 
-        // 7. Verify Potential Violators with CG1 Leave by-emails API for "L" (Leave) or "W" (WFH)
+        // 7. Verify Potential Violators with CG1 Leave by-emails API for "H" (Holiday), "L" (Leave), or "W" (WFH)
         var leavesMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         if (potentialViolators.Count > 0)
         {
@@ -179,8 +179,12 @@ public class EvaluateDailyAttendanceCommandHandler : ICommandHandler<EvaluateDai
             {
                 if (string.IsNullOrWhiteSpace(resp.Email) || resp.Leave == null) continue;
 
-                // Check for "L" (Leave) or "W" (Work From Home)
-                if (resp.Leave.Any(l => string.Equals(l, "L", StringComparison.OrdinalIgnoreCase)))
+                // Priority Check: "H" (Holiday) > "L" (Leave) > "W" (Work From Home)
+                if (resp.Leave.Any(l => string.Equals(l, "H", StringComparison.OrdinalIgnoreCase)))
+                {
+                    leavesMap[resp.Email.Trim()] = "H";
+                }
+                else if (resp.Leave.Any(l => string.Equals(l, "L", StringComparison.OrdinalIgnoreCase)))
                 {
                     leavesMap[resp.Email.Trim()] = "L";
                 }
@@ -192,11 +196,24 @@ public class EvaluateDailyAttendanceCommandHandler : ICommandHandler<EvaluateDai
         }
 
         // 8. Process each Potential Violator
+        int holidayCount = 0;
         foreach (var emp in potentialViolators)
         {
             leavesMap.TryGetValue(emp.Email, out var statusFromCg1);
 
-            if (statusFromCg1 == "L")
+            if (statusFromCg1 == "H")
+            {
+                attendanceToUpsert.Add(new DailyAttendance
+                {
+                    EmployeeId = emp.Id,
+                    Date = targetDate,
+                    Status = AttendanceStatus.H,
+                    LeaveType = "Holiday",
+                    RuleVersionId = activePolicy.Id
+                });
+                holidayCount++;
+            }
+            else if (statusFromCg1 == "L")
             {
                 attendanceToUpsert.Add(new DailyAttendance
                 {
@@ -270,8 +287,8 @@ public class EvaluateDailyAttendanceCommandHandler : ICommandHandler<EvaluateDai
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Daily Evaluation completed for {Date}. Present: {P}, Leave: {L}, WFH: {W}, Exception: {E}, Absent: {A}",
-            targetDate, presentCount, leaveCount, wfhCount, exceptionCount, absentCount);
+        _logger.LogInformation("Daily Evaluation completed for {Date}. Present: {P}, Leave: {L}, WFH: {W}, Exception: {E}, Holiday: {H}, Absent: {A}",
+            targetDate, presentCount, leaveCount, wfhCount, exceptionCount, holidayCount, absentCount);
 
         return Result<EvaluateDailyAttendanceResult>.Success(new EvaluateDailyAttendanceResult(
             targetDate,
@@ -281,7 +298,7 @@ public class EvaluateDailyAttendanceCommandHandler : ICommandHandler<EvaluateDai
             wfhCount,
             exceptionCount,
             absentCount,
-            0,
+            holidayCount,
             DateTime.UtcNow));
     }
 

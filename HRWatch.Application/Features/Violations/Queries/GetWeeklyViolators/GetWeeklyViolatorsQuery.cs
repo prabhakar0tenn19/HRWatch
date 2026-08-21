@@ -96,11 +96,12 @@ public class GetWeeklyViolatorsQueryHandler : IQueryHandler<GetWeeklyViolatorsQu
             int leaveDays = empAtts.Count(a => a.Status == AttendanceStatus.L);
             int wfhDays = empAtts.Count(a => a.Status == AttendanceStatus.W);
             int exceptionDays = empAtts.Count(a => a.Status == AttendanceStatus.E);
+            int holidayDays = empAtts.Count(a => a.Status == AttendanceStatus.H);
             int absentDays = empAtts.Count(a => a.Status == AttendanceStatus.A);
 
             int requiredDays = _wfoService.GetRequiredWfoDays(emp.Designation, emp.IsDeployed, rulesJson);
             var (isViolator, shortfall, severity) = _wfoService.EvaluateWeeklyCompliance(
-                presentDays, requiredDays, leaveDays, wfhDays, exceptionDays, absentDays);
+                presentDays, requiredDays, leaveDays, wfhDays, exceptionDays, absentDays, holidayDays);
 
             if (isViolator)
             {

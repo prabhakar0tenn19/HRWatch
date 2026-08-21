@@ -74,11 +74,12 @@ public class WfoEvaluationService : IWfoEvaluationService
 
     public (bool IsViolator, int Shortfall, ViolationSeverity? Severity) EvaluateWeeklyCompliance(
         int actualPresentDays, 
-        int requiredDays,
-        int approvedLeaveDays = 0,
-        int approvedWfhDays = 0,
-        int exceptionDays = 0,
-        int absentDays = 0)
+        int requiredDays, 
+        int approvedLeaveDays = 0, 
+        int approvedWfhDays = 0, 
+        int exceptionDays = 0, 
+        int absentDays = 0,
+        int holidayDays = 0)
     {
         // If there are no unauthorized absences (A), the employee is NOT a violator!
         if (absentDays <= 0)
