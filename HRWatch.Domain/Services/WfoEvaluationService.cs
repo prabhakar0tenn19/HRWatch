@@ -80,23 +80,14 @@ public class WfoEvaluationService : IWfoEvaluationService
         int exceptionDays = 0,
         int absentDays = 0)
     {
-        // 1. Effective required WFO days adjusts when an employee takes approved leaves or exceptions
-        // (e.g. If SDE required 5 days, but took 2 approved leaves, effective target for remaining days is 3 days).
-        int effectiveRequiredWfo = Math.Max(0, requiredDays - approvedLeaveDays - exceptionDays);
-
-        // 2. If employee came for their effective required WFO days and has 0 unauthorized absences, they are fully compliant!
-        if (actualPresentDays >= effectiveRequiredWfo && absentDays == 0)
+        // If there are no unauthorized absences (A), the employee is NOT a violator!
+        if (absentDays <= 0)
         {
             return (false, 0, null);
         }
 
-        // 3. Shortfall is determined by unapproved absences or remaining deficit
-        int shortfall = Math.Max(absentDays, effectiveRequiredWfo - actualPresentDays);
-
-        if (shortfall <= 0)
-        {
-            return (false, 0, null);
-        }
+        // Shortfall is exactly the count of unauthorized absent days
+        int shortfall = absentDays;
 
         var severity = shortfall switch
         {

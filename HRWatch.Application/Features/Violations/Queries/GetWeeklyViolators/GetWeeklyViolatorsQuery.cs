@@ -43,7 +43,8 @@ public class GetWeeklyViolatorsQueryHandler : IQueryHandler<GetWeeklyViolatorsQu
 
     public async Task<Result<IReadOnlyList<WeeklyViolatorDto>>> HandleAsync(GetWeeklyViolatorsQuery query, CancellationToken cancellationToken = default)
     {
-        var weekStart = query.WeekStartDate ?? GetCurrentMonday(HRWatch.Domain.Common.IndiaDateTime.Today);
+        var inputDate = query.WeekStartDate ?? HRWatch.Domain.Common.IndiaDateTime.Today;
+        var weekStart = GetCurrentMonday(inputDate);
         var weekEnd = weekStart.AddDays(4);
 
         var activePolicy = await _dbContext.Policies.FirstOrDefaultAsync(p => p.IsActive, cancellationToken);
