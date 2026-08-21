@@ -43,6 +43,9 @@ public class WfoEvaluationServiceTests
     [InlineData(2, 5, 0, 0, 0, 3, 0, true, 3, ViolationSeverity.High)]
     [InlineData(0, 5, 0, 0, 0, 5, 0, true, 5, ViolationSeverity.High)]
     [InlineData(3, 3, 0, 2, 0, 0, 0, false, 0, null)] // Manager 3 P + 2 WFH + 0 A = Compliant
+    [InlineData(3, 3, 0, 0, 0, 2, 0, false, 0, null)] // Manager 3 P + 0 Leaves + 2 A = COMPLIANT (quota met!)
+    [InlineData(2, 3, 0, 0, 0, 3, 0, true, 1, ViolationSeverity.Low)] // Manager 2 P + 3 A = 1 shortfall
+    [InlineData(1, 3, 0, 0, 0, 4, 0, true, 2, ViolationSeverity.Medium)] // Manager 1 P + 4 A = 2 shortfall
     [InlineData(2, 3, 0, 2, 0, 1, 0, true, 1, ViolationSeverity.Low)] // Manager 2 P + 2 WFH + 1 A = Violator (Low)
     [InlineData(3, 5, 2, 0, 0, 0, 0, false, 0, null)] // SDE 3 P + 2 Approved Leaves + 0 A = Compliant!
     [InlineData(2, 5, 2, 0, 0, 1, 0, true, 1, ViolationSeverity.Low)] // SDE 2 P + 2 Leaves + 1 A = Violator (1 shortfall)

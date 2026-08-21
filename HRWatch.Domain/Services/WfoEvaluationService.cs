@@ -81,14 +81,26 @@ public class WfoEvaluationService : IWfoEvaluationService
         int absentDays = 0,
         int holidayDays = 0)
     {
-        // If there are no unauthorized absences (A), the employee is NOT a violator!
+        // 1. If employee has met their required office quota (e.g. Manager 3/3, SDE 5/5), they are COMPLIANT!
+        if (actualPresentDays >= requiredDays)
+        {
+            return (false, 0, null);
+        }
+
+        // 2. If there are no unauthorized absences (A), they are COMPLIANT!
         if (absentDays <= 0)
         {
             return (false, 0, null);
         }
 
-        // Shortfall is exactly the count of unauthorized absent days
-        int shortfall = absentDays;
+        // 3. Shortfall is the minimum of missing quota days and unauthorized absences
+        int missingQuota = requiredDays - actualPresentDays;
+        int shortfall = Math.Min(missingQuota, absentDays);
+
+        if (shortfall <= 0)
+        {
+            return (false, 0, null);
+        }
 
         var severity = shortfall switch
         {
