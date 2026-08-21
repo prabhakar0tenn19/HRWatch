@@ -438,14 +438,14 @@ POST /api/attendance/evaluate-daily?targetDate=2026-08-20
 #### Sample Response (`200 OK`):
 ```json
 {
-  "targetDate": "2026-08-20",
-  "totalEmployees": 174,
+  "evaluationDate": "2026-08-20",
+  "totalActiveEmployees": 174,
   "presentCount": 140,
   "leaveCount": 5,
   "wfhCount": 10,
   "exceptionCount": 2,
   "absentCount": 17,
-  "weekendOffCount": 0,
+  "weekendOrHolidayCount": 0,
   "evaluatedAt": "2026-08-21T09:20:00Z"
 }
 ```
