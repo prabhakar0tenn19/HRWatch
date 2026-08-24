@@ -20,9 +20,9 @@ public class ExceptionsController : ControllerBase
         _queryMediator = queryMediator;
     }
 
-    /// <summary>
+  
     /// Creates a new WFH / on-site exception with overlapping date range validation.
-    /// </summary>
+   
     [HttpPost]
     public async Task<IActionResult> CreateException([FromBody] CreateExceptionCommand command, CancellationToken cancellationToken)
     {
@@ -35,9 +35,9 @@ public class ExceptionsController : ControllerBase
         return Ok(new { ExceptionId = result.Value, Message = "Exception created successfully." });
     }
 
-    /// <summary>
+    
     /// Soft-revokes an active exception (IsActive = false).
-    /// </summary>
+    
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> RevokeException(Guid id, CancellationToken cancellationToken)
     {
@@ -50,9 +50,9 @@ public class ExceptionsController : ControllerBase
         return Ok(new { Message = "Exception revoked successfully." });
     }
 
-    /// <summary>
+    
     /// Lists active exceptions (or all history).
-    /// </summary>
+   
     [HttpGet]
     public async Task<IActionResult> GetExceptions([FromQuery] Guid? employeeId, [FromQuery] bool activeOnly = true, CancellationToken cancellationToken = default)
     {

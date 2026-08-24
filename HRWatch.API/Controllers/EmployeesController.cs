@@ -16,9 +16,9 @@ public class EmployeesController : ControllerBase
         _queryMediator = queryMediator;
     }
 
-    /// <summary>
+  
     /// Gets all active employees from the database with optional search and filters.
-    /// </summary>
+   
     [HttpGet]
     public async Task<IActionResult> GetAllEmployees(
         [FromQuery] string? searchTerm,
@@ -39,9 +39,9 @@ public class EmployeesController : ControllerBase
         return Ok(result.Value);
     }
 
-    /// <summary>
+ 
     /// Gets detailed information for an employee by Id.
-    /// </summary>
+   
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetEmployeeById(Guid id, CancellationToken cancellationToken = default)
     {

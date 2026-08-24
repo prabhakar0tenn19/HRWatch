@@ -1,6 +1,7 @@
 using Coravel.Invocable;
 using HRWatch.Application.Features.Attendance.Commands.EvaluateDailyAttendance;
 using HRWatch.Application.Features.Attendance.Commands.SyncEmployees;
+using HRWatch.Application.Features.Notifications.Commands.SendWeeklyViolatorsEmail;
 using HRWatch.Domain.Common;
 using LiteBus.Commands.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -59,6 +60,33 @@ public class DailyEmployeeSyncJob : IInvocable
         else
         {
             _logger.LogError("[Coravel Scheduler] Employee Master Sync failed: {Error}", result.ErrorMessage);
+        }
+    }
+}
+
+public class WeeklyViolatorsEmailJob : IInvocable
+{
+    private readonly ICommandMediator _commandMediator;
+    private readonly ILogger<WeeklyViolatorsEmailJob> _logger;
+
+    public WeeklyViolatorsEmailJob(ICommandMediator commandMediator, ILogger<WeeklyViolatorsEmailJob> logger)
+    {
+        _commandMediator = commandMediator;
+        _logger = logger;
+    }
+
+    public async Task Invoke()
+    {
+        _logger.LogInformation("[Coravel Scheduler] Starting scheduled Weekly Violators Email Dispatch at Sunday 10:00 PM IST...");
+        var result = await _commandMediator.SendAsync(new SendWeeklyViolatorsEmailCommand(TriggeredBy: "CoravelScheduler:Sunday10PM"));
+        if (result.IsSuccess)
+        {
+            _logger.LogInformation("[Coravel Scheduler] Weekly Violators Email Dispatch completed successfully. Violators: {Count}, Week: {Start} to {End}",
+                result.Value?.ViolatorsCount, result.Value?.WeekStartDate, result.Value?.WeekEndDate);
+        }
+        else
+        {
+            _logger.LogError("[Coravel Scheduler] Weekly Violators Email Dispatch failed: {Error}", result.ErrorMessage);
         }
     }
 }

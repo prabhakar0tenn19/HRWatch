@@ -139,6 +139,11 @@ app.Services.UseScheduler(scheduler =>
     scheduler.Schedule<DailyEmployeeSyncJob>()
         .DailyAt(0, 0)
         .Zoned(istZone);
+
+    // Sunday 10:00 PM IST (22:00): Weekly Violators Email Summary Job
+    scheduler.Schedule<WeeklyViolatorsEmailJob>()
+        .Cron("0 22 * * 0")
+        .Zoned(istZone);
 });
 
 // 9. HTTP Pipeline

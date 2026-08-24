@@ -6,6 +6,7 @@ using HRWatch.Infrastructure.ExternalApis.Cg1;
 using HRWatch.Infrastructure.ExternalApis.Cosec;
 using HRWatch.Infrastructure.Persistence;
 using HRWatch.Infrastructure.Scheduler;
+using HRWatch.Infrastructure.Services.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,10 +47,15 @@ public static class DependencyInjection
         // 3. Auth Token Service
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
-        // 4. Coravel Scheduler & Invocables
+        // 4. SMTP Email Service
+        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+        services.AddScoped<IEmailService, SmtpEmailService>();
+
+        // 5. Coravel Scheduler & Invocables
         services.AddScheduler();
         services.AddTransient<DailyAttendanceEvaluationJob>();
         services.AddTransient<DailyEmployeeSyncJob>();
+        services.AddTransient<WeeklyViolatorsEmailJob>();
 
         return services;
     }

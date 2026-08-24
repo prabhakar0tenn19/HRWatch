@@ -16,10 +16,10 @@ public class ViolationsController : ControllerBase
         _queryMediator = queryMediator;
     }
 
-    /// <summary>
+
     /// Gets weekly WFO violators for a single week based on dynamic policy rules.
     /// Automatically normalizes any provided date to its week's Monday.
-    /// </summary>
+   
     [HttpGet("weekly")]
     public async Task<IActionResult> GetWeeklyViolators(
         [FromQuery] DateOnly? weekStartDate,
