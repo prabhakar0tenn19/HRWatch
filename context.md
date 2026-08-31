@@ -1,7 +1,7 @@
 # HRWatch 2.0 — System Master Context & Technical Architecture
 
 ## 1. System Overview
-**HRWatch 2.0** is an enterprise-grade automated workforce attendance, compliance evaluation, and violator monitoring system built for **CG Infinity**. It aggregates biometric hardware in-punches from on-premise **Matrix COSEC** devices and leave/WFH/holiday approvals from the cloud-hosted **CG1 ERP Azure API**, evaluating compliance against configurable organizational Work-From-Office (WFO) policies.
+**HRWatch 2.0** is an enterprise-grade automated workforce attendance, compliance evaluation, and violator monitoring system built for **CG Infinity**. It aggregates biometric hardware in-punches from on-premise **Matrix COSEC** devices and leave/WFH/holiday approvals from the cloud-hosted **CG1 ERP Azure API**, evaluating compliance against configurable organizational Work-From-Office (WFO) policies and automatically dispatching weekly audit emails to HR.
 
 ---
 
@@ -17,14 +17,24 @@
 - **Live Base URL:** `https://cg-one-ntier-dev.azurewebsites.net`
 - **Authentication:** Custom Request Header (`Secret-Key: 7X#r@2oH8*Ql%5sP!3bY`)
 - **Master Employee Overview:** `GET /api/v2/EmployeeWeeklyOverview`
+  * Returns master employee roster (Active/Inactive, Department, Designation, Project Deployment, `isOnProbation`, and `dateOfJoining`).
 - **Filter by Email & Dates:** `GET /api/v2/EmployeeWeeklyOverview/by-emails?emailIds={email}&startDate={start}&endDate={end}`
-- **Data Retrieved:** Master employee roster (Active/Inactive, Department, Designation, Project Deployment), Approved Leaves (`L`), Approved WFH (`W`), and Public/Company Holidays (`H`).
+  * Data Retrieved: Approved Leaves (`L`), Approved WFH (`W`), and Public/Company Holidays (`H`).
+  * **Batching Architecture:** Queries are chunked in batches of 25 emails (`emailList.Chunk(25)`) to prevent Azure IIS query string length overflow (HTTP 404 URL too long).
 
 ### 2.3 Local Database (Microsoft SQL Server)
 - **Server:** `IN-PRABHAKAR-LA`
 - **Database:** `HRWatch`
 - **Authentication:** SQL Server (`sa` / `Cyber1234`)
 - **ORM:** Entity Framework Core (Code-First Migrations)
+- **Schema Highlights:**
+  * `Employees` table includes `IsOnProbation` (bit) and `DateOfJoining` (datetime2 nullable).
+
+### 2.4 SMTP Notification & Scheduler Engine
+- **SMTP Server:** `smtp.gmail.com:587` (TLS / STARTTLS)
+- **Automated Scheduler:** Coravel Fluent Invocable
+- **Execution Schedule:** Every Sunday at 10:00 PM IST (22:00) (`Cron: 0 22 * * 0`)
+- **Payload:** Generates responsive HTML email table with previous completed week's violators (Name, Code, Email, Required, Present, Shortfall, Severity).
 
 ---
 
@@ -47,6 +57,7 @@ $$\text{COSEC Biometric Punch ('P')} \longrightarrow \text{CG1 Holiday ('H')} \l
 Operational weeks run from Monday to Friday (5 working days).
 
 #### Standard Policy Quotas:
+- **Employees on Probation (`IsOnProbation == true`):** Requires **5 physical office days/week** (overrides standard designation rules like Manager/Associate).
 - **Client Deployed SDE, Intern, or Consultant:** Requires **5 physical office days/week**.
 - **Client Deployed Associate or Manager:** Requires **3 physical office days/week**.
 - **Bench / Internal HQ (Any Role):** Requires **5 physical office days/week**.
@@ -71,8 +82,8 @@ Operational weeks run from Monday to Friday (5 working days).
 - **Design System:** CG-1 Enterprise Theme (Amber `#F59E0B` active pills, Warm light cream `#FAF8F5` sidebar, Pure White `#FFFFFF` cards, Status badges for `P`, `H`, `L`, `W`, `E`, `A`, `WO`).
 - **Feature Pages:**
   1. `/` (Weekly Violators Dashboard with Past 4 Weeks accordion cards & Top 5 Shortfall widget)
-  2. `/calendar` (Attendance Calendar Grid with day cells and in-punch times)
-  3. `/employees` (Master Directory with sliding detail drawer)
+  2. `/calendar` (Attendance Calendar Grid with day cells, in-punch times, and Holiday indicators)
+  3. `/employees` (Master Directory with sliding detail drawer and probation badges)
   4. `/exceptions` (HR Override modal and active/history table)
-  5. `/policies` (Version history and WFO category rules)
+  5. `/policies` (Version history, Probation rules, and WFO category rules)
   6. `/admin` (Live Sync & Manual Evaluation controls)

@@ -32,7 +32,17 @@ public class WfoEvaluationServiceTests
     [InlineData("SDE", false, 5)]
     public void GetRequiredWfoDays_BenchEmployees_AlwaysReturnsFiveDays(string designation, bool isDeployed, int expectedDays)
     {
-        var result = _sut.GetRequiredWfoDays(designation, isDeployed);
+        var result = _sut.GetRequiredWfoDays(designation, isDeployed, false);
+        Assert.Equal(expectedDays, result);
+    }
+
+    [Theory]
+    [InlineData("Manager 1", true, true, 5)] // Probation overrides manager 3-day rule to 5 days
+    [InlineData("Director", true, true, 5)]
+    [InlineData("Associate 2", true, true, 5)]
+    public void GetRequiredWfoDays_ProbationEmployees_ReturnsProbationDays(string designation, bool isDeployed, bool isOnProbation, int expectedDays)
+    {
+        var result = _sut.GetRequiredWfoDays(designation, isDeployed, isOnProbation);
         Assert.Equal(expectedDays, result);
     }
 

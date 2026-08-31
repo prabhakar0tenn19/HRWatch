@@ -4,7 +4,7 @@ namespace HRWatch.Domain.Services;
 
 public interface IWfoEvaluationService
 {
-    int GetRequiredWfoDays(string? designation, bool isDeployed, string? rulesJson = null);
+    int GetRequiredWfoDays(string? designation, bool isDeployed, bool isOnProbation = false, string? rulesJson = null);
     
     (bool IsViolator, int Shortfall, ViolationSeverity? Severity) EvaluateWeeklyCompliance(
         int actualPresentDays, 

@@ -82,6 +82,8 @@ public class SyncEmployeesCommandHandler : ICommandHandler<SyncEmployeesCommand,
                     Designation = item.Designation?.Trim() ?? "SDE",
                     IsDeployed = item.IsDeployed,
                     IsActive = true,
+                    IsOnProbation = item.IsOnProbation,
+                    DateOfJoining = item.DateOfJoining,
                     Location = "India",
                     CreatedAt = DateTime.UtcNow
                 };
@@ -95,6 +97,8 @@ public class SyncEmployeesCommandHandler : ICommandHandler<SyncEmployeesCommand,
                 existing.FullName = item.Name?.Trim() ?? existing.FullName;
                 existing.Designation = item.Designation?.Trim() ?? existing.Designation;
                 existing.IsDeployed = item.IsDeployed;
+                existing.IsOnProbation = item.IsOnProbation;
+                existing.DateOfJoining = item.DateOfJoining ?? existing.DateOfJoining;
                 existing.IsActive = true; // Ensure active
                 existing.UpdatedAt = DateTime.UtcNow;
 

@@ -4,6 +4,7 @@ using HRWatch.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRWatch.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260831100000_AddProbationAndJoiningDateToEmployee")]
+    partial class AddProbationAndJoiningDateToEmployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,10 +41,10 @@ namespace HRWatch.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LeaveType")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("RuleVersionId")
+                    b.Property<Guid?>("RuleVersionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Status")
@@ -120,6 +123,9 @@ namespace HRWatch.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DateOfJoining")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Designation")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -150,20 +156,17 @@ namespace HRWatch.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("IsOnProbation")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasDefaultValue("India");
-
-                    b.Property<bool>("IsOnProbation")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("DateOfJoining")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -219,7 +222,9 @@ namespace HRWatch.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId", "FromDate", "ToDate", "IsActive");
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("FromDate", "ToDate", "IsActive");
 
                     b.ToTable("EmployeeExceptions", (string)null);
                 });
@@ -245,12 +250,14 @@ namespace HRWatch.Infrastructure.Migrations
                         .HasColumnType("date");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("PolicyName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("RulesJson")
                         .IsRequired()
@@ -259,12 +266,12 @@ namespace HRWatch.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IsActive");
 
                     b.ToTable("Policies", (string)null);
                 });
@@ -283,6 +290,11 @@ namespace HRWatch.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -294,78 +306,18 @@ namespace HRWatch.Infrastructure.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("Username")
-                        .IsUnique();
-
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("HRWatch.Domain.Entities.DailyAttendance", b =>
-                {
-                    b.HasOne("HRWatch.Domain.Entities.Employee", "Employee")
-                        .WithMany("Attendances")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HRWatch.Domain.Entities.Policy", "Policy")
-                        .WithMany("Attendances")
-                        .HasForeignKey("RuleVersionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Policy");
-                });
-
-            modelBuilder.Entity("HRWatch.Domain.Entities.DailyPunchLog", b =>
-                {
-                    b.HasOne("HRWatch.Domain.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("HRWatch.Domain.Entities.EmployeeException", b =>
-                {
-                    b.HasOne("HRWatch.Domain.Entities.Employee", "Employee")
-                        .WithMany("Exceptions")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("HRWatch.Domain.Entities.Employee", b =>
-                {
-                    b.Navigation("Attendances");
-
-                    b.Navigation("Exceptions");
-                });
-
-            modelBuilder.Entity("HRWatch.Domain.Entities.Policy", b =>
-                {
-                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

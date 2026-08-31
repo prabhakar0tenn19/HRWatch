@@ -78,27 +78,40 @@ public class Cg1ApiClient : ICg1ApiClient
         var dateStart = $"{date:yyyy-MM-dd}T00:00:00";
         var dateEnd = $"{date:yyyy-MM-dd}T23:59:59";
 
-        var queryParams = string.Join("&", emailList.Select(e => $"emailIds={Uri.EscapeDataString(e.Trim())}"));
-        var url = $"/api/v2/EmployeeWeeklyOverview/by-emails?{queryParams}&startDate={dateStart}&endDate={dateEnd}";
+        var allResults = new List<Cg1EmployeeDto>();
 
-        _logger.LogInformation("Calling CG1 Leave by-emails API for {Count} potential violators on {Date}", emailList.Count, date);
+        // Batch emails in chunks of 25 to avoid Azure IIS query string length limit (HTTP 404 URL too long)
+        var chunks = emailList.Chunk(25).ToList();
+        _logger.LogInformation("Calling CG1 Leave by-emails API for {Total} potential violators in {Chunks} batches on {Date}",
+            emailList.Count, chunks.Count, date);
 
-        try
+        foreach (var chunk in chunks)
         {
-            var response = await _httpClient.GetAsync(url, cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            var queryParams = string.Join("&", chunk.Select(e => $"emailIds={Uri.EscapeDataString(e.Trim())}"));
+            var url = $"/api/v2/EmployeeWeeklyOverview/by-emails?{queryParams}&startDate={dateStart}&endDate={dateEnd}";
+
+            try
             {
-                _logger.LogWarning("CG1 by-emails API returned status {StatusCode}", response.StatusCode);
-                return [];
-            }
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("CG1 by-emails API returned status {StatusCode} for batch of {Count} emails", response.StatusCode, chunk.Length);
+                    continue;
+                }
 
-            var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            return JsonSerializer.Deserialize<List<Cg1EmployeeDto>>(json, JsonOptions) ?? [];
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                var batchResults = JsonSerializer.Deserialize<List<Cg1EmployeeDto>>(json, JsonOptions);
+                if (batchResults != null)
+                {
+                    allResults.AddRange(batchResults);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to call CG1 Leave by-emails API for batch of {Count} emails", chunk.Length);
+            }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to call CG1 Leave by-emails API");
-            return [];
-        }
+
+        return allResults;
     }
 }

@@ -121,7 +121,7 @@ public class GetPastWeeksSummaryQueryHandler : IQueryHandler<GetPastWeeksSummary
                 int holidayDays = empAtts.Count(a => a.Status == AttendanceStatus.H);
                 int absentDays = empAtts.Count(a => a.Status == AttendanceStatus.A);
 
-                int requiredDays = _wfoService.GetRequiredWfoDays(emp.Designation, emp.IsDeployed, rulesJson);
+                int requiredDays = _wfoService.GetRequiredWfoDays(emp.Designation, emp.IsDeployed, emp.IsOnProbation, rulesJson);
                 var (isViolator, shortfall, severity) = _wfoService.EvaluateWeeklyCompliance(
                     presentDays, requiredDays, leaveDays, wfhDays, exceptionDays, absentDays, holidayDays);
 

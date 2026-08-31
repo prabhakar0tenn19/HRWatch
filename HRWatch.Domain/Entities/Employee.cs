@@ -11,6 +11,8 @@ public class Employee : BaseEntity
     public bool IsDeployed { get; set; } = true; // false = Bench (Requires 5 days WFO)
     public bool IsActive { get; set; } = true;
     public string Location { get; set; } = "India";
+    public bool IsOnProbation { get; set; } = false;
+    public DateTime? DateOfJoining { get; set; }
 
     // Navigation collections
     public ICollection<DailyAttendance> Attendances { get; set; } = new List<DailyAttendance>();

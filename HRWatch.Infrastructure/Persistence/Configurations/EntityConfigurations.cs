@@ -45,6 +45,12 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         builder.Property(e => e.IsActive)
             .HasDefaultValue(true);
 
+        builder.Property(e => e.IsOnProbation)
+            .HasDefaultValue(false);
+
+        builder.Property(e => e.DateOfJoining)
+            .IsRequired(false);
+
         builder.HasIndex(e => new { e.IsActive, e.Location });
     }
 }

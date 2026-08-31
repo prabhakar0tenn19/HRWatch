@@ -5,7 +5,7 @@ namespace HRWatch.Domain.Services;
 
 public class WfoEvaluationService : IWfoEvaluationService
 {
-    public int GetRequiredWfoDays(string? designation, bool isDeployed, string? rulesJson = null)
+    public int GetRequiredWfoDays(string? designation, bool isDeployed, bool isOnProbation = false, string? rulesJson = null)
     {
         // 1. Bench employees (isDeployed == false) ALWAYS require 5 days WFO
         if (!isDeployed)
@@ -13,7 +13,48 @@ public class WfoEvaluationService : IWfoEvaluationService
             return 5;
         }
 
-        // 2. Check dynamic rulesJson if provided
+        // 2. Probation Rule: If employee is on probation, probation policy takes precedence over designation!
+        if (isOnProbation)
+        {
+            if (!string.IsNullOrWhiteSpace(rulesJson))
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(rulesJson);
+                    if (doc.RootElement.TryGetProperty("MinWfoDaysPerWeek", out var minDaysObj))
+                    {
+                        foreach (var prop in minDaysObj.EnumerateObject())
+                        {
+                            if (prop.Name.Equals("Probation", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return prop.Value.GetInt32();
+                            }
+                        }
+                    }
+                    else if (doc.RootElement.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var el in doc.RootElement.EnumerateArray())
+                        {
+                            if (el.TryGetProperty("category", out var cat) &&
+                                cat.GetString()?.Equals("Probation", StringComparison.OrdinalIgnoreCase) == true)
+                            {
+                                if (el.TryGetProperty("normalWfoDays", out var normalDays))
+                                {
+                                    return normalDays.GetInt32();
+                                }
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // Fallback to default probation rule
+                }
+            }
+            return 5; // Default 5 days WFO for probation
+        }
+
+        // 3. Dynamic Policy Rules evaluation by designation
         if (!string.IsNullOrWhiteSpace(rulesJson))
         {
             try
@@ -33,6 +74,21 @@ public class WfoEvaluationService : IWfoEvaluationService
                         }
                     }
                 }
+                else if (doc.RootElement.ValueKind == JsonValueKind.Array && designation != null)
+                {
+                    var titleUpper = designation.Trim().ToUpperInvariant();
+                    foreach (var el in doc.RootElement.EnumerateArray())
+                    {
+                        if (el.TryGetProperty("category", out var cat) &&
+                            titleUpper.Contains(cat.GetString()?.ToUpperInvariant() ?? ""))
+                        {
+                            if (el.TryGetProperty("normalWfoDays", out var normalDays))
+                            {
+                                return normalDays.GetInt32();
+                            }
+                        }
+                    }
+                }
             }
             catch
             {
@@ -40,7 +96,7 @@ public class WfoEvaluationService : IWfoEvaluationService
             }
         }
 
-        // 3. Standard Company Policy fallback (policy.md)
+        // 4. Standard Company Policy fallback (policy.md)
         if (string.IsNullOrWhiteSpace(designation))
         {
             return 5;
@@ -104,9 +160,9 @@ public class WfoEvaluationService : IWfoEvaluationService
 
         var severity = shortfall switch
         {
-            1 => ViolationSeverity.Low,
+            >= 3 => ViolationSeverity.High,
             2 => ViolationSeverity.Medium,
-            _ => ViolationSeverity.High
+            _ => ViolationSeverity.Low
         };
 
         return (true, shortfall, severity);

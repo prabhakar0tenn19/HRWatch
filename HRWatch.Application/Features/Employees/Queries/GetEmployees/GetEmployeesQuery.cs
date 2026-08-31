@@ -15,6 +15,8 @@ public record EmployeeDto(
     bool IsDeployed,
     bool IsActive,
     string Location,
+    bool IsOnProbation,
+    DateTime? DateOfJoining,
     int PresentDays,
     int AbsentDays,
     int LeaveDays,
@@ -47,24 +49,24 @@ public class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, Result<
             dbQuery = dbQuery.Where(e => e.IsActive);
         }
 
-        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
-        {
-            var term = query.SearchTerm.Trim().ToLower();
-            dbQuery = dbQuery.Where(e =>
-                e.FullName.ToLower().Contains(term) ||
-                e.Email.ToLower().Contains(term) ||
-                e.EmployeeCode.ToLower().Contains(term));
-        }
-
         if (!string.IsNullOrWhiteSpace(query.Designation))
         {
-            var desig = query.Designation.Trim().ToLower();
-            dbQuery = dbQuery.Where(e => e.Designation.ToLower().Contains(desig));
+            var desig = query.Designation.Trim();
+            dbQuery = dbQuery.Where(e => EF.Functions.Like(e.Designation, $"%{desig}%"));
         }
 
         if (query.IsDeployed.HasValue)
         {
             dbQuery = dbQuery.Where(e => e.IsDeployed == query.IsDeployed.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+        {
+            var term = query.SearchTerm.Trim();
+            dbQuery = dbQuery.Where(e =>
+                EF.Functions.Like(e.FullName, $"%{term}%") ||
+                EF.Functions.Like(e.Email, $"%{term}%") ||
+                EF.Functions.Like(e.EmployeeCode, $"%{term}%"));
         }
 
         var employees = await dbQuery
@@ -79,6 +81,8 @@ public class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, Result<
                 e.IsDeployed,
                 e.IsActive,
                 e.Location,
+                e.IsOnProbation,
+                e.DateOfJoining,
                 e.CreatedAt,
                 PresentDays = e.Attendances.Count(a => a.Status == AttendanceStatus.P),
                 AbsentDays = e.Attendances.Count(a => a.Status == AttendanceStatus.A),
@@ -104,6 +108,8 @@ public class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, Result<
                 e.IsDeployed,
                 e.IsActive,
                 e.Location,
+                e.IsOnProbation,
+                e.DateOfJoining,
                 e.PresentDays,
                 e.AbsentDays,
                 e.LeaveDays,

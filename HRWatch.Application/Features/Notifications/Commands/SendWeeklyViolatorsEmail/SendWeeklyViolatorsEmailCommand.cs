@@ -102,7 +102,7 @@ public class SendWeeklyViolatorsEmailCommandHandler : ICommandHandler<SendWeekly
             int holidayDays = empAtts.Count(a => a.Status == AttendanceStatus.H);
             int absentDays = empAtts.Count(a => a.Status == AttendanceStatus.A);
 
-            int requiredDays = _wfoService.GetRequiredWfoDays(emp.Designation, emp.IsDeployed, rulesJson);
+            int requiredDays = _wfoService.GetRequiredWfoDays(emp.Designation, emp.IsDeployed, emp.IsOnProbation, rulesJson);
 
             // Strict compliance check: Shortfall > 0 AND AbsentDays > 0
             var (isViolator, shortfall, severity) = _wfoService.EvaluateWeeklyCompliance(

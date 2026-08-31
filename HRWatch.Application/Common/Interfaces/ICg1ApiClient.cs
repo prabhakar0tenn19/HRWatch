@@ -7,12 +7,14 @@ public record Cg1EmployeeDto(
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("email")] string Email,
     [property: JsonPropertyName("employeeCode")] string? EmployeeCode,
+    [property: JsonPropertyName("dateOfJoining")] DateTime? DateOfJoining,
     [property: JsonPropertyName("location")] string? Location,
     [property: JsonPropertyName("designation")] string Designation,
     [property: JsonPropertyName("startDate")] DateTime StartDate,
     [property: JsonPropertyName("endDate")] DateTime EndDate,
     [property: JsonPropertyName("leave")] List<string>? Leave,
-    [property: JsonPropertyName("isDeployed")] bool IsDeployed);
+    [property: JsonPropertyName("isDeployed")] bool IsDeployed,
+    [property: JsonPropertyName("isOnProbation")] bool IsOnProbation);
 
 public interface ICg1ApiClient
 {
