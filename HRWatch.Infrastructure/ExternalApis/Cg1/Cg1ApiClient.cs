@@ -16,7 +16,7 @@ public class Cg1ApiClient : ICg1ApiClient
         _httpClient = httpClient;
         _logger = logger;
 
-        var baseUrl = configuration["CG1:BaseUrl"] ?? "https://localhost:5092";
+        var baseUrl = configuration["CG1:BaseUrl"] ?? "https://cg-one-ntier-dev.azurewebsites.net";
         var secretKey = configuration["CG1:SecretKey"] ?? "__EmployeeWeeklyOverviewSecretKey__";
 
         if (_httpClient.BaseAddress == null)

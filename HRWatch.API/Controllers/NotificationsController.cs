@@ -26,9 +26,9 @@ public class NotificationsController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
+   
     /// Sends a test email to verify Gmail SMTP configuration and connectivity.
-    /// </summary>
+ 
     [HttpPost("test-email")]
     public async Task<IActionResult> SendTestEmail([FromQuery] string? recipientEmail, CancellationToken cancellationToken)
     {
@@ -44,14 +44,17 @@ public class NotificationsController : ControllerBase
             {
                 recipients.AddRange(configRecipients);
             }
+            else if (!string.IsNullOrWhiteSpace(_configuration["EmailSettings:FromEmail"]))
+            {
+                recipients.Add(_configuration["EmailSettings:FromEmail"]!);
+            }
             else
             {
-                recipients.Add("spidyprabhakar@gmail.com");
-                recipients.Add("prabhakar0tenn@gmail.com");
+                return BadRequest(new { success = false, message = "No recipient email provided and EmailSettings:HrRecipients is empty." });
             }
         }
 
-        string subject = "[HRWatch 2.0] SMTP Test Email — Connection Verified";
+        string subject = "[HRWatch] SMTP Test Email — Connection Verified";
         string htmlBody = $@"
 <!DOCTYPE html>
 <html>
@@ -98,9 +101,9 @@ public class NotificationsController : ControllerBase
         });
     }
 
-    /// <summary>
+ 
     /// Manually triggers the weekly violators email dispatch report (for immediate testing or audit).
-    /// </summary>
+   
     [HttpPost("send-weekly-violators")]
     public async Task<IActionResult> SendWeeklyViolators(
         [FromQuery] DateOnly? customWeekStart,

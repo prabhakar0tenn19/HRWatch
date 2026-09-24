@@ -15,9 +15,9 @@ public class AuthController : ControllerBase
         _commandMediator = commandMediator;
     }
 
-    /// <summary>
+    
     /// Authenticates HR / Admin user and returns JWT token.
-    /// </summary>
+    
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command, CancellationToken cancellationToken)
     {
@@ -30,9 +30,9 @@ public class AuthController : ControllerBase
         return Ok(result.Value);
     }
 
-    /// <summary>
+ 
     /// Registers a new HR / Admin user (SuperAdmin only in production).
-    /// </summary>
+   
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken cancellationToken)
     {

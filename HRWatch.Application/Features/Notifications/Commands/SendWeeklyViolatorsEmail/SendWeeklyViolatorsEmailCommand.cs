@@ -145,8 +145,9 @@ public class SendWeeklyViolatorsEmailCommandHandler : ICommandHandler<SendWeekly
         }
 
         // 7. Generate Responsive Branded HTML Template
+        var portalUrl = _configuration["PortalUrl"] ?? "http://localhost:3000";
         string subject = $"[HRWatch Alert] Weekly WFO Violators Report: {weekStart:dd MMM} - {weekEnd:dd MMM yyyy} ({totalViolators} Violators)";
-        string htmlBody = GenerateEmailHtml(weekStart, weekEnd, sortedViolators, totalViolators, criticalViolators);
+        string htmlBody = GenerateEmailHtml(weekStart, weekEnd, sortedViolators, totalViolators, criticalViolators, portalUrl);
 
         // 8. Dispatch Email
         bool emailSent = await _emailService.SendEmailAsync(recipients, subject, htmlBody, cancellationToken);
@@ -195,7 +196,8 @@ public class SendWeeklyViolatorsEmailCommandHandler : ICommandHandler<SendWeekly
         DateOnly weekEnd,
         List<(Employee Emp, int Required, int Present, int Absent, int Shortfall, ViolationSeverity? Severity)> violators,
         int totalViolators,
-        int criticalViolators)
+        int criticalViolators,
+        string portalUrl)
     {
         var sb = new StringBuilder();
 
@@ -322,7 +324,7 @@ public class SendWeeklyViolatorsEmailCommandHandler : ICommandHandler<SendWeekly
   <div class=""footer"">
     <p>This is an automated system notification dispatched by HRWatch 2.0 Attendance Engine.<br>
     Please do not reply directly to this email.</p>
-    <a href=""http://localhost:3000"" class=""btn-portal"">Open HRWatch 2.0 Portal &rarr;</a>
+    <a href=""{portalUrl}"" class=""btn-portal"">Open HRWatch 2.0 Portal &rarr;</a>
   </div>
 </div>
 </body>

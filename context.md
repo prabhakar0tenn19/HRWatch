@@ -35,6 +35,17 @@
 - **Automated Scheduler:** Coravel Fluent Invocable
 - **Execution Schedule:** Every Sunday at 10:00 PM IST (22:00) (`Cron: 0 22 * * 0`)
 - **Payload:** Generates responsive HTML email table with previous completed week's violators (Name, Code, Email, Required, Present, Shortfall, Severity).
+- **Portal Link:** Dynamically configured via `PortalUrl` in `appsettings.json` (pointing to production web portal).
+
+### 2.5 Security, CORS & Health Probes
+- **Authentication & JWT:** Custom Bearer JWT issuance (`POST /api/auth/login`, `POST /api/auth/register`) with BCrypt salted password hashing.
+  * Default SuperAdmin: `admin` / `Admin@1234` (Email: `admin@cginfinity.com`).
+- **CORS Architecture:** Configurable origins via `Cors:AllowedOrigins` in `appsettings.json` (defaults to `["http://localhost:3000"]`). Zero C# code changes required on deployment.
+- **SSL Certificate Handling:** Secure public SSL validation for cloud endpoints (`https://cg-one-ntier-dev.azurewebsites.net`), with environment-aware fallback for local mock testing.
+- **Health Check Endpoint:** `GET /health` returns HTTP 200 OK `Healthy` for Azure App Service liveness and container health probes.
+- **Database Initializer:** Auto-migrates EF Core schema on startup. If database is fresh, automatically seeds:
+  1. Default Policy Version 1 (Active).
+  2. Default SuperAdmin User (`admin` / `Admin@1234`).
 
 ---
 

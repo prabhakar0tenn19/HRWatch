@@ -28,6 +28,10 @@ public class PoliciesController : ControllerBase
         var result = await _queryMediator.QueryAsync(new GetActivePolicyQuery(), cancellationToken);
         if (!result.IsSuccess)
         {
+            if (result.ErrorCode == "NOT_FOUND")
+            {
+                return Ok(null);
+            }
             return NotFound(new { result.ErrorMessage, result.ErrorCode });
         }
 
