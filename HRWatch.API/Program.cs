@@ -131,7 +131,15 @@ using (var scope = app.Services.CreateScope())
     {
         if (dbContext.Database.ProviderName?.Contains("Npgsql", StringComparison.OrdinalIgnoreCase) == true)
         {
-            dbContext.Database.EnsureCreated();
+            try
+            {
+                var sqlScript = dbContext.Database.GenerateCreateScript();
+                dbContext.Database.ExecuteSqlRaw(sqlScript);
+            }
+            catch (Exception ex)
+            {
+                Log.Information("PostgreSQL schema check: {Message}", ex.Message);
+            }
             Log.Information("PostgreSQL (Supabase) database schema ensured.");
         }
         else
