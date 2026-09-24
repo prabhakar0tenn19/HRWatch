@@ -75,6 +75,28 @@ public class AttendanceController : ControllerBase
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Ingests biometric punches collected from office Matrix device and triggers compliance evaluation.
+    /// Used by office relay script to bridge internal biometric punches into the cloud portal.
+    /// </summary>
+    [HttpPost("ingest-punches")]
+    public async Task<IActionResult> IngestPunches(
+        [FromBody] HRWatch.Application.Features.Attendance.Commands.IngestPunches.IngestPunchesRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _commandMediator.SendAsync(
+            new HRWatch.Application.Features.Attendance.Commands.IngestPunches.IngestPunchesCommand(
+                request.TargetDate, request.Punches, request.EvaluateAttendance, "OfficeRelay"),
+            cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { result.ErrorMessage, result.ErrorCode });
+        }
+
+        return Ok(result.Value);
+    }
+
     
     /// Returns the calendar view (P, L, E, A, WO, H) for employees within a date range.
     
