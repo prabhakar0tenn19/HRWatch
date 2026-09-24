@@ -105,19 +105,25 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("HRWatchCorsPolicy", policy =>
     {
-        if (allowedOrigins != null && allowedOrigins.Length > 0)
+        policy.SetIsOriginAllowed(origin =>
         {
-            policy.WithOrigins(allowedOrigins)
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
-        }
-        else
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        }
+            if (string.IsNullOrWhiteSpace(origin)) return false;
+            try
+            {
+                var uri = new Uri(origin);
+                return uri.Host == "localhost"
+                    || uri.Host == "127.0.0.1"
+                    || uri.Host.EndsWith("vercel.app", StringComparison.OrdinalIgnoreCase)
+                    || (allowedOrigins != null && allowedOrigins.Any(o => o.TrimEnd('/').Equals(origin.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)));
+            }
+            catch
+            {
+                return false;
+            }
+        })
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
@@ -215,13 +221,14 @@ app.Services.UseScheduler(scheduler =>
 });
 
 // 9. HTTP Pipeline
+app.UseCors("HRWatchCorsPolicy");
+
 if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("EnableSwagger"))
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRWatch 2.0 API v1"));
 }
 
-app.UseCors("HRWatchCorsPolicy");
 app.MapHealthChecks("/health");
 app.UseAuthentication();
 app.UseAuthorization();
