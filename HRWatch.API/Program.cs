@@ -10,6 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
+// Enable Npgsql legacy timestamp behavior so PostgreSQL accepts Unspecified DateTime kinds
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Serilog Configuration
