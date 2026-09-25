@@ -93,11 +93,14 @@ $cosecheaders = @{ "Authorization" = "Basic $base64Auth" }
 $isOfficeLanConnected = $false
 try {
     Write-Host "[*] Testing connection to Matrix device at $cosecUrl..." -ForegroundColor Gray
-    $testReq = Invoke-WebRequest -Uri "$cosecUrl" -Method Head -TimeoutSec 3 -ErrorAction Stop
-    $isOfficeLanConnected = $true
-    Write-Host "[+] Office Biometric Network Connected!" -ForegroundColor Green
+    $isOfficeLanConnected = Test-NetConnection -ComputerName "172.24.120.88" -Port 80 -InformationLevel Quiet -WarningAction SilentlyContinue
+    if ($isOfficeLanConnected) {
+        Write-Host "[+] Office Biometric Network Connected!" -ForegroundColor Green
+    } else {
+        Write-Host "[-] Matrix device ($cosecUrl) is unreachable (not on office network)." -ForegroundColor Yellow
+    }
 } catch {
-    Write-Host "[-] Matrix device ($cosecUrl) is unreachable (not currently on office Wi-Fi/LAN)." -ForegroundColor Yellow
+    Write-Host "[-] Matrix device ($cosecUrl) is unreachable: $($_.Exception.Message)" -ForegroundColor Yellow
 }
 
 $simulationEmployees = $null
@@ -207,7 +210,7 @@ while ($currentDt -le $dtEnd) {
             }
             Write-Host "     [+] Retrieved $($punches.Count) punches from Matrix COSEC." -ForegroundColor Green
         } catch {
-            Write-Host "     [-] Matrix query error for $currentDateStr: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "     [-] Matrix query error for $($currentDateStr) - $($_.Exception.Message)" -ForegroundColor Red
         }
     } elseif ($simulationEmployees) {
         # Simulation Mode
@@ -257,7 +260,7 @@ while ($currentDt -le $dtEnd) {
             Status = "Evaluated OK"
         }
     } catch {
-        Write-Host "     [-] Ingest failed for $currentDateStr: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "     [-] Ingest failed for $($currentDateStr) - $($_.Exception.Message)" -ForegroundColor Red
         $summaryResults += [PSCustomObject]@{
             Date = $currentDateStr
             Day = $dayOfWeek
