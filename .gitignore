@@ -45,6 +45,8 @@ _ReSharper*/
 .env
 .env.*
 !.env.example
+challenges_and_fix*.md
+*.local.md
 
 ## OS Generated
 Thumbs.db
