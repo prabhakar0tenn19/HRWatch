@@ -10,12 +10,12 @@
 ### 2.1 Matrix COSEC Biometric Device
 - **Protocol:** HTTP REST
 - **Live Endpoint:** `http://172.24.120.88/cosec/api.svc/v2/event-ta`
-- **Authentication:** Basic Auth (`API` / `Api@123`)
+- **Authentication:** Basic Auth (`API` / `<COSEC_PASSWORD>`)
 - **Data Retrieved:** Physical IN/OUT timestamp punches by employee biometric PIN/code.
 
 ### 2.2 CG1 Enterprise Azure API
 - **Live Base URL:** `https://cg-one-ntier-dev.azurewebsites.net`
-- **Authentication:** Custom Request Header (`Secret-Key: 7X#r@2oH8*Ql%5sP!3bY`)
+- **Authentication:** Custom Request Header (`Secret-Key: <CG1_SECRET_KEY>`)
 - **Master Employee Overview:** `GET /api/v2/EmployeeWeeklyOverview`
   * Returns master employee roster (Active/Inactive, Department, Designation, Project Deployment, `isOnProbation`, and `dateOfJoining`).
 - **Filter by Email & Dates:** `GET /api/v2/EmployeeWeeklyOverview/by-emails?emailIds={email}&startDate={start}&endDate={end}`
@@ -25,7 +25,7 @@
 ### 2.3 Local Database (Microsoft SQL Server)
 - **Server:** `IN-PRABHAKAR-LA`
 - **Database:** `HRWatch`
-- **Authentication:** SQL Server (`sa` / `Cyber1234`)
+- **Authentication:** SQL Server (`sa` / `<SQL_SA_PASSWORD>`)
 - **ORM:** Entity Framework Core (Code-First Migrations)
 - **Schema Highlights:**
   * `Employees` table includes `IsOnProbation` (bit) and `DateOfJoining` (datetime2 nullable).
@@ -39,7 +39,7 @@
 
 ### 2.5 Security, CORS & Health Probes
 - **Authentication & JWT:** Custom Bearer JWT issuance (`POST /api/auth/login`, `POST /api/auth/register`) with BCrypt salted password hashing.
-  * Default SuperAdmin: `admin` / `Admin@1234` (Email: `admin@cginfinity.com`).
+  * Default SuperAdmin: `admin` / `<ADMIN_PASSWORD>` (Email: `admin@cginfinity.com`).
 - **CORS Architecture:** Configurable origins via `Cors:AllowedOrigins` in `appsettings.json` (defaults to `["http://localhost:3000"]`). Zero C# code changes required on deployment.
 - **SSL Certificate Handling:** Secure public SSL validation for cloud endpoints (`https://cg-one-ntier-dev.azurewebsites.net`), with environment-aware fallback for local mock testing.
 - **Health Check Endpoint:** `GET /health` returns HTTP 200 OK `Healthy` for Azure App Service liveness and container health probes.
